@@ -9,7 +9,10 @@ import { service } from '../data/service';
 import { developer } from '../data/developer';
 import { Check, Fish, LifeBuoy, Sailboat, Ship } from 'lucide-react-native';
 
+import INSTAGRAM from '../assets/svgs/instagram.svg';
+
 const HomeScreen = () => {
+
   return (
     <>
       <ScrollView>
@@ -59,21 +62,21 @@ const HomeScreen = () => {
           {service.map((item, index) => (
             <View key={index} style={styles.perfectContainer}>
               <Text style={styles.perfectTitle}>{item.tiltle}</Text>
-              <View style={{/* borderWidth: 1,*/ paddingVertical: 10, paddingHorizontal: 10 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, /*borderWidth: 1,*/ marginLeft: 10 }}>
-                  <Check color={Colors.DEFAULT_GREEN} size={30} />
+              <View style={{ /*borderWidth: 1,*/ paddingVertical: 10, paddingHorizontal: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginRight: 10, /*paddingHorizontal: 10,*/ /*borderWidth: 1,*/ marginLeft: 10 }}>
+                  <Check color={Colors.DEFAULT_GREEN} size={25} />
                   <Text style={styles.pointText}>{item.point_1}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, /*borderWidth: 1,*/ marginLeft: 10 }}>
-                  <Check color={Colors.DEFAULT_GREEN} size={30} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginRight: 10,/* paddingHorizontal: 10,*/ /*borderWidth: 1,*/ marginLeft: 10 }}>
+                  <Check color={Colors.DEFAULT_GREEN} size={25} />
                   <Text style={styles.pointText}>{item.point_2}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, /*borderWidth: 1,*/ marginLeft: 10 }}>
-                  <Check color={Colors.DEFAULT_GREEN} size={30} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginRight: 10,/* paddingHorizontal: 10,*/ /*borderWidth: 1,*/ marginLeft: 10 }}>
+                  <Check color={Colors.DEFAULT_GREEN} size={25} />
                   <Text style={styles.pointText}>{item.point_3}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, /*borderWidth: 1,*/ marginLeft: 10 }}>
-                  <Check color={Colors.DEFAULT_GREEN} size={30} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginRight: 10,/* paddingHorizontal: 10,*/ /*borderWidth: 1,*/ marginLeft: 10 }}>
+                  <Check color={Colors.DEFAULT_GREEN} size={25} />
                   <Text style={styles.pointText}>{item.point_4}</Text>
                 </View>
               </View>
@@ -106,30 +109,37 @@ const HomeScreen = () => {
           </TouchableOpacity>
 
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 15, marginVertical: 20, marginHorizontal: 30 }}>
+          <Text style={styles.socialMediaText}>social media</Text>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 15, marginVertical: 10, marginHorizontal: 30 }}>
             <TouchableOpacity style={styles.iconButton}>
               <Ship
                 size={20}
                 color={Colors.DEFAULT_SKY_BLUE}
               />
+              {/* <Image source={Images.INSTAGRAM} resizeMode="contain" style={styles.socialMediaImages}/> */}
+              {/* <INSTAGRAM width={25} height={25} fill={Colors.DEFAULT_SKY_BLUE} /> */}
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
               <Fish
                 size={20}
                 color={Colors.DEFAULT_SKY_BLUE}
               />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
               <Sailboat
                 size={20}
                 color={Colors.DEFAULT_SKY_BLUE}
               />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
-               <LifeBuoy
+              <LifeBuoy
                 size={20}
                 color={Colors.DEFAULT_SKY_BLUE}
               />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
             </TouchableOpacity>
           </View>
 
@@ -315,8 +325,8 @@ const styles = StyleSheet.create({
     color: Colors.DEFAULT_GREEN,
   },
   pointText: {
-    fontSize: 18,
-    lineHeight: 18 * 1.4,
+    fontSize: 17,
+    lineHeight: 17 * 1.4,
     fontFamily: Fonts.POPPINS_MEDIUM,
     color: Colors.DEFAULT_BLACK,
     padding: 10
@@ -325,8 +335,22 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.DEFAULT_SKY_BLUE,
     borderWidth: 1,
     borderColor: Colors.DEFAULT_SKY_BLUE,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
     borderRadius: 10,
+  },
+  socialMediaImages: {
+    width: 25,
+    height: 25,
+    color: Colors.DEFAULT_SKY_BLUE,
+  },
+    socialMediaText: {
+    fontSize: 30,
+    lineHeight: 30 * 1.4,
+    fontFamily: Fonts.POPPINS_BOLD,
+    color: Colors.DEFAULT_DARK_GRAY,
+    paddingHorizontal:30,
+    paddingVertical: 10,
+    textTransform:'uppercase'
   }
 })

@@ -15,4 +15,6 @@ export default {
     PROFILE8: require('../assets/images/drawerNavigationImages/Profile8.png'),
     PROFILE9: require('../assets/images/drawerNavigationImages/Profile9.png'),
     PROFILE10: require('../assets/images/drawerNavigationImages/Profile10.png'),
+
+    // INSTAGRAM: require('../assets/svg/instagram.svg'),
 }

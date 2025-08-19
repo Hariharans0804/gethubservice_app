@@ -1,0 +1,98 @@
+import { Check, Medal, X } from "lucide-react-native";
+
+export const aboutService_1 = [
+    {
+        id: 1,
+        icon: Check,
+        tiltle: 'GetHubService is for you if you',
+        point_1: 'Want the choice between subscription convenience and complete ownership',
+        point_2: 'Need automatic updates, AI features, and managed services (subscription model)',
+        point_3: 'Prefer full control and customization freedom (ownership model)',
+        point_4: 'Value transparent pricing with flexible payment options',
+        point_5: 'Want to scale from startup to enterprise without switching platforms',
+        point_6: 'Need industry-specific templates and professional design tools',
+        point_7: 'Appreciate world-class support and comprehensive documentation',
+    },
+];
+
+export const aboutService_2 = [
+    {
+        id: 1,
+        icon: X,
+        tiltle: 'GetHubService is not for you if you',
+        point_1: 'Prefer managing multiple disconnected services yourself',
+        point_2: 'Enjoy debugging complex technical issues at 3 AM',
+        point_3: 'Think one-size-fits-all solutions work for every business',
+        point_4: 'Want to spend more time on infrastructure than your core business',
+        point_5: 'Like juggling multiple vendors for hosting, domains, analytics, and support',
+    },
+];
+
+export const aboutService_3 = [
+    {
+        id: 1,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile1.png'),
+        title: 'Subscription & Ownership Options',
+        description: 'Choose the model that fits your business - subscription with automatic updates or complete ownership',
+        point_1: 'Subscription: Automatic updates & AI features',
+        point_2: 'Ownership: Complete control & customization',
+        point_3: 'Flexible billing cycles & revenue analytics',
+        point_4: 'Built-in payment processing',
+    },
+    {
+        id: 2,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile2.png'),
+        title: 'Multi-tenant & scalable',
+        description: 'Perfect for SaaS, client dashboards, and growing startups',
+        point_1: 'Isolated client environments',
+        point_2: 'Horizontal scaling',
+        point_3: 'Load balancing',
+        point_4: 'Database sharding',
+    },
+    {
+        id: 3,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile3.png'),
+        title: 'Ready-to-use APIs',
+        description: 'Provision websites, domains, and services in minutes',
+        point_1: 'RESTful API endpoints',
+        point_2: 'GraphQL support',
+        point_3: 'Webhook integrations',
+        point_4: 'SDK libraries',
+    },
+    {
+        id: 4,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile4.png'),
+        title: 'Zero config scaling',
+        description: 'Auto-scale your services as you grow',
+        point_1: 'Automatic resource allocation',
+        point_2: 'Performance monitoring',
+        point_3: 'Load optimization',
+        point_4: 'Cost management',
+    },
+    {
+        id: 5,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile5.png'),
+        title: 'Design agnostic',
+        description: 'Use your own frontend or plug into our templates',
+        point_1: 'Headless architecture',
+        point_2: 'Custom frontend support',
+        point_3: 'Template marketplace',
+        point_4: 'White-label solutions',
+    },
+    {
+        id: 6,
+        icon: Medal,
+        image: require('../assets/images/drawerNavigationImages/Profile6.png'),
+        title: 'Fully managed',
+        description: 'Focus on building. We handle the rest.',
+        point_1: 'Infrastructure management',
+        point_2: 'Security updates',
+        point_3: 'Backup & recovery',
+        point_4: '24/7 monitoring',
+    },
+];
