@@ -4,7 +4,8 @@ import React from 'react'
 const PricingScreen = () => {
   return (
     <View>
-      <Text>PricingScreen</Text>
+      <Text>Tailwind ✅</Text>
+      <Text>React Native + NativeWind</Text>
     </View>
   )
 }

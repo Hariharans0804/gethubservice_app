@@ -33,8 +33,8 @@ const CustomDrawerContent = (props) => {
                     if (item.children) {
                         return (
                             <View key={i}>
-                                <TouchableOpacity 
-                                activeOpacity={0.7}
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
                                     style={styles.parentItem}
                                     onPress={() => toggleExpand(item.label)}
                                 >

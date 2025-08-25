@@ -100,3 +100,10 @@ To learn more about React Native, take a look at the following resources:
 cd android
 gradlew clean
 gradlew assembleRelease
+
+
+npm start --reset-cache
+npx react-native start --reset-cache
+
+
+npm install --save-dev metro-react-native-babel-preset

@@ -42,7 +42,7 @@ const BusinessDetailsForm = ({ onContinue, renderInput }) => {
             <Text style={styles.textInputHeading}>Business Description (Optional)</Text>
             {renderInput('businessDescription', 'Tell us what makes your business special...', { multiline: true }/*false, true*/)}
 
-            <View style={{flexDirection:'row',alignItems:'center',}}>
+            <View style={{flexDirection:'row',alignItems:'center',/*borderWidth:1,marginHorizontal:10*/}}>
                 <Text style={styles.textInputHeading}>Your Website Address</Text>
                 <Text style={styles.getHubServiceText2}>(.gethubservice)</Text>
             </View>
@@ -145,9 +145,9 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
     },
     textInputHeading: {
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: Fonts.POPPINS_MEDIUM,
-        lineHeight: 20 * 1.4,
+        lineHeight: 18 * 1.4,
         padding: 10
     },
     textInputContainer: {
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         width: '90%',
         paddingHorizontal: 10,
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: Fonts.POPPINS_MEDIUM,
-        // lineHeight: 18 * 1.4,
+        // lineHeight: 16 * 1.4,
     },
     getHubServiceText: {
         borderStartWidth: 1.5,

@@ -113,9 +113,9 @@ const styles = StyleSheet.create({
         color: Colors.DEFAULT_BLACK
     },
     textInputHeading: {
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: Fonts.POPPINS_MEDIUM,
-        lineHeight: 20 * 1.4,
+        lineHeight: 18 * 1.4,
         padding: 10
     },
     textInputContainer: {
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         width: '90%',
         paddingHorizontal: 10,
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: Fonts.POPPINS_MEDIUM,
         // lineHeight: 18 * 1.4,
     },

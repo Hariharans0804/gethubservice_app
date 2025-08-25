@@ -11,7 +11,7 @@ import { Check, Fish, LifeBuoy, Sailboat, Ship } from 'lucide-react-native';
 
 import INSTAGRAM from '../assets/svgs/instagram.svg';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
 
   return (
     <>
@@ -19,7 +19,7 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Text style={styles.headerText}>Build Professional Websites That Grow With Your Business</Text>
           <Text style={styles.headerText1}>Choose subscription for automatic updates & AI features, or ownership for complete control. Either way, get a stunning website built for your industry.</Text>
-          <TouchableOpacity style={styles.headerButton}>
+          <TouchableOpacity style={styles.headerButton} onPress={() => navigation.navigate("Login")}>
             <Text style={styles.headerButtonText}>Start Free Trial</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerButton2}>
@@ -344,13 +344,13 @@ const styles = StyleSheet.create({
     height: 25,
     color: Colors.DEFAULT_SKY_BLUE,
   },
-    socialMediaText: {
+  socialMediaText: {
     fontSize: 30,
     lineHeight: 30 * 1.4,
     fontFamily: Fonts.POPPINS_BOLD,
     color: Colors.DEFAULT_DARK_GRAY,
-    paddingHorizontal:30,
+    paddingHorizontal: 30,
     paddingVertical: 10,
-    textTransform:'uppercase'
+    textTransform: 'uppercase'
   }
 })

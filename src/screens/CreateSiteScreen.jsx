@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form'
 import * as Yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Dropdown } from 'react-native-element-dropdown'
-import { CircleX, ShieldCheck } from 'lucide-react-native'
+import { CircleX, Fish, LifeBuoy, Sailboat, ShieldCheck, Ship } from 'lucide-react-native'
 import { fetchCategoriesAPI } from '../api/getApi'
 import { siteCreationAPI } from '../api/postApi';
 
@@ -239,7 +239,7 @@ const CreateSiteScreen = ({ navigation }) => {
           [
             {
               text: "OK",
-              // onPress: () => navigation?.navigate('Dashboard', { siteId: response.data.siteId })
+              onPress: () => navigation?.navigate('Login', { siteId: response.data.siteId })
             }
           ]
         );
@@ -285,6 +285,42 @@ const CreateSiteScreen = ({ navigation }) => {
           />
         )}
       </View>
+
+
+      <Text style={styles.socialMediaText}>social media</Text>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 15, marginVertical: 10, marginHorizontal: 30 }}>
+        <TouchableOpacity style={styles.iconButton}>
+          <Ship
+            size={20}
+            color={Colors.DEFAULT_SKY_BLUE}
+          />
+          {/* <Image source={Images.INSTAGRAM} resizeMode="contain" style={styles.socialMediaImages}/> */}
+          {/* <INSTAGRAM width={25} height={25} fill={Colors.DEFAULT_SKY_BLUE} /> */}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Fish
+            size={20}
+            color={Colors.DEFAULT_SKY_BLUE}
+          />
+          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <Sailboat
+            size={20}
+            color={Colors.DEFAULT_SKY_BLUE}
+          />
+          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton}>
+          <LifeBuoy
+            size={20}
+            color={Colors.DEFAULT_SKY_BLUE}
+          />
+          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 };
@@ -398,6 +434,24 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: Fonts.POPPINS_MEDIUM,
     // lineHeight: 18 * 1.4,
+  },
+  socialMediaText: {
+    fontSize: 30,
+    lineHeight: 30 * 1.4,
+    fontFamily: Fonts.POPPINS_BOLD,
+    color: Colors.DEFAULT_DARK_GRAY,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    textTransform: 'uppercase'
+  },
+  iconButton: {
+    // backgroundColor: Colors.DEFAULT_SKY_BLUE,
+    borderWidth: 1,
+    borderColor: Colors.DEFAULT_SKY_BLUE,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginBottom: 10
   },
 })
 

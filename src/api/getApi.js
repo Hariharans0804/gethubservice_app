@@ -25,7 +25,7 @@ export const fetchCategoriesAPI = async () => {
             data: allTypes
         };
     } catch (error) {
-        console.error('Fetch categories error:', error.message);
+        console.error('Fetch categories error:', error);
         return {
             success: false,
             error: error.message

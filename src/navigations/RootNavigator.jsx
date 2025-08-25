@@ -1,14 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import { AboutScreen, FeaturesScreen, HomeScreen, IndustriesScreen, PricingScreen, TemplatesScreen } from '../screens';
 import { Colors } from '../constants';
 import CustomDrawerContent from './CustomDrawerContent';
 import { drawerList } from '../data/drawerList';
+import { LoginScreen } from '../screens';
 
-const RootNavigator = () => {
+const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
-    const Drawer = createDrawerNavigator();
+
+const AppDrawer = () => {
 
     const getAllScreens = () => {
         let screens = [];
@@ -42,6 +45,16 @@ const RootNavigator = () => {
                 />
             ))}
         </Drawer.Navigator>
+    )
+}
+
+
+const RootNavigator = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name='App' component={AppDrawer} />
+            <Stack.Screen name='Login' component={LoginScreen} options={{ headerShown: true }} />
+        </Stack.Navigator>
     )
 }
 
