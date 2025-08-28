@@ -5,7 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { Colors } from '../constants';
 import CustomDrawerContent from './CustomDrawerContent';
 import { drawerList } from '../data/drawerList';
-import { LoginScreen } from '../screens';
+import { LoginScreen } from '../screens/Auth';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -53,7 +53,7 @@ const RootNavigator = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name='App' component={AppDrawer} />
-            <Stack.Screen name='Login' component={LoginScreen} options={{ headerShown: true }} />
+            <Stack.Screen name='Login' component={LoginScreen} />
         </Stack.Navigator>
     )
 }

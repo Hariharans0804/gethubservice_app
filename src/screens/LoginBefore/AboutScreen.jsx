@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { Colors, Fonts } from '../constants'
-import { aboutService_1, aboutService_2, aboutService_3 } from '../data/aboutService'
+import { Colors, Fonts } from '../../constants'
+import { aboutService_1, aboutService_2, aboutService_3 } from '../../data/aboutService'
 import { ArrowRight, Fish, LifeBuoy, Sailboat, Ship } from 'lucide-react-native'
 
 const AboutScreen = () => {

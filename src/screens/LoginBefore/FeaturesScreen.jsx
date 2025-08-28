@@ -1,8 +1,8 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { Colors, Fonts } from '../constants'
+import { Colors, Fonts } from '../../constants'
 import { ArrowRight, Fish, LifeBuoy, Sailboat, Ship } from 'lucide-react-native'
-import { features_1, features_2, features_3 } from '../data/features'
+import { features_1, features_2, features_3 } from '../../data/features'
 
 const FeaturesScreen = () => {
   return (

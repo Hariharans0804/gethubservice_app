@@ -1,9 +1,8 @@
-import { Anchor, Angry, Anvil, Baby, Cable, Dam, Factory, Folder, Gem, Home, Layout, LayoutDashboard, MSquare, Octagon, ShieldPlus } from 'lucide-react-native';
-import { AboutScreen, BlogScreen, CreateSiteScreen, DashboardScreen, FeaturesScreen, GetStartedScreen, HomeScreen, IndustriesScreen, PricingScreen, SiteNeedsScreen, SupportScreen, TemplatesScreen, WhyChooseUsScreen } from '../screens';
+import { Anchor, Angry, Anvil, Baby, Cable, Dam, Factory, Folder, Gem, Home, Layout, MSquare, ShieldPlus } from 'lucide-react-native';
+import { AboutScreen, BlogScreen, CreateSiteScreen, FeaturesScreen, GetStartedScreen, HomeScreen, IndustriesScreen, PricingScreen, SiteNeedsScreen, SupportScreen, TemplatesScreen, WhyChooseUsScreen } from '../screens/LoginBefore';
 
 export const drawerList = [
     { label: "Home", route: "Home", icon: Home, component: HomeScreen },
-    // { label: "Dashboard", route: "Dashboard", icon: LayoutDashboard, component: DashboardScreen },
     { label: "About", route: "About", icon: Anvil, component: AboutScreen },
     { label: "Features", route: "Features", icon: ShieldPlus, component: FeaturesScreen },
     { label: "WhyChooseUs", route: "WhyChooseUs", icon: MSquare, component: WhyChooseUsScreen },

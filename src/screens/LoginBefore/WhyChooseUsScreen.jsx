@@ -1,7 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { Colors, Fonts } from '../constants'
-import { whyChooseUsData_1, whyChooseUsData_2 } from '../data/whyChooseUsData'
+import { Colors, Fonts } from '../../constants'
+import { whyChooseUsData_1, whyChooseUsData_2 } from '../../data/whyChooseUsData'
 import { ArrowRight, Fish, LifeBuoy, Sailboat, Ship } from 'lucide-react-native'
 
 const WhyChooseUsScreen = () => {

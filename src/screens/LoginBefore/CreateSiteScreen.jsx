@@ -1,14 +1,17 @@
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Colors, Fonts } from '../constants'
-import { AccountSetupForm, BusinessDetailsForm, ThemeColorsForm } from '../components'
+import { Colors, Fonts } from '../../constants'
 import { Controller, useForm } from 'react-hook-form'
 import * as Yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Dropdown } from 'react-native-element-dropdown'
 import { CircleX, Fish, LifeBuoy, Sailboat, ShieldCheck, Ship } from 'lucide-react-native'
-import { fetchCategoriesAPI } from '../api/getApi'
-import { siteCreationAPI } from '../api/postApi';
+import { fetchCategoriesAPI } from '../../api/getApi'
+import { siteCreationAPI } from '../../api/postApi';
+import { API_HOST } from '@env'
+
+import axiosInstance from '../../api/axiosInstance';
+import { AccountSetupForm, BusinessDetailsForm, ThemeColorsForm } from '../../components'
 
 // const schema = Yup.object().shape({
 //   businessName: Yup.string()
@@ -69,8 +72,19 @@ const CreateSiteScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({});
 
 
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/api/business-types/categories');
+      console.log('categories', response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  }
+
   const fetchBusinessType = async () => {
     const result = await fetchCategoriesAPI();
+    console.log('result', result);
     if (result.success) {
       setBusinessType(result.data);
     } else {
@@ -81,6 +95,8 @@ const CreateSiteScreen = ({ navigation }) => {
 
   useEffect(() => {
     fetchBusinessType();
+    fetchData();
+    console.log('Axios instance created with base URL:', API_HOST);
   }, [])
 
   const { control, handleSubmit, formState: { errors }, setValue } = useForm({

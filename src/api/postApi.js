@@ -1,14 +1,27 @@
-import axios from "axios";
-import { API_HOST } from '@env'
 
-const axiosInstance = axios.create({
-    baseURL: API_HOST,
-    timeout: 5000,
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+import { API_HOST } from '@env';
+
+export const loginAPI = async (loginData) => {
+    try {
+        const response = await fetch(`${API_HOST}/api/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData),
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Login API response:', data);
+        return data;
+    } catch (error) {
+        console.error('Login API error:', error);
+        throw error;
     }
-});
+};
 
 export const siteCreationAPI = async (siteData) => {
     try {
@@ -63,17 +76,26 @@ export const siteCreationAPI = async (siteData) => {
         }
 
         console.log('📤 Transformed Request Data:', transformedData);
-        
-        const response = await axiosInstance.post(`/api/site-creation/create-public`, transformedData);
-        
-        // Handle the successful response
-        const { data } = response;
-        
+
+        const response = await fetch(`${API_HOST}/api/site-creation/create-public`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(transformedData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        }
+
         console.log('✅ API Response:', {
             status: response.status,
             data: data
         });
-        
+
         const responseData = {
             success: true,
             message: data.message,
@@ -92,21 +114,19 @@ export const siteCreationAPI = async (siteData) => {
                 redirectTo: data.data.redirectTo
             }
         };
-        
+
         console.log('🔄 Processed Response:', responseData);
         return responseData;
     } catch (error) {
         console.log('❌ API Error:', {
             message: error.message,
-            response: error.response?.data,
-            status: error.response?.status
         });
-        
+
         const errorResponse = {
             success: false,
-            error: error.response?.data?.message || error.message
+            error: error.message
         };
-        
+
         console.log('🔄 Error Response:', errorResponse);
         return errorResponse;
     }
