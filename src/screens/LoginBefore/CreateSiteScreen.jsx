@@ -1,17 +1,15 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
 import { Controller, useForm } from 'react-hook-form'
 import * as Yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Dropdown } from 'react-native-element-dropdown'
-import { CircleX, Fish, LifeBuoy, Sailboat, ShieldCheck, Ship } from 'lucide-react-native'
+import { CircleX, Eye, EyeOff, Fish, LifeBuoy, Sailboat, ShieldCheck, Ship } from 'lucide-react-native'
 import { fetchCategoriesAPI } from '../../api/getApi'
 import { siteCreationAPI } from '../../api/postApi';
-import { API_HOST } from '@env'
-
-import axiosInstance from '../../api/axiosInstance';
 import { AccountSetupForm, BusinessDetailsForm, ThemeColorsForm } from '../../components'
+import { Country, State, City } from "country-state-city";
 
 // const schema = Yup.object().shape({
 //   businessName: Yup.string()
@@ -70,21 +68,16 @@ const CreateSiteScreen = ({ navigation }) => {
   const [businessType, setBusinessType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCPassword, setShowCPassword] = useState(false);
 
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
-
-  const fetchData = async () => {
-    try {
-      const response = await axiosInstance.get('/api/business-types/categories');
-      console.log('categories', response.data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  }
 
   const fetchBusinessType = async () => {
     const result = await fetchCategoriesAPI();
-    console.log('result', result);
+    // console.log('result', result);
     if (result.success) {
       setBusinessType(result.data);
     } else {
@@ -95,8 +88,9 @@ const CreateSiteScreen = ({ navigation }) => {
 
   useEffect(() => {
     fetchBusinessType();
-    fetchData();
-    console.log('Axios instance created with base URL:', API_HOST);
+    const indiaStates = State.getStatesOfCountry("IN");
+    // console.log('indiaStates', indiaStates);
+    setStates(indiaStates);
   }, [])
 
   const { control, handleSubmit, formState: { errors }, setValue } = useForm({
@@ -123,6 +117,7 @@ const CreateSiteScreen = ({ navigation }) => {
   const renderInput = (name, placeholder, options = {}) => {
     const { secure = false, multiline = false, isDropdown = false } = options;
 
+    // ✅ Business Type Dropdown
     if (isDropdown) {
       return (
         <>
@@ -130,25 +125,71 @@ const CreateSiteScreen = ({ navigation }) => {
             control={control}
             name={name}
             render={({ field: { onChange, value } }) => (
+              <>
+                <View style={styles.dropdownWrapper}>
+                  <Dropdown
+                    style={[
+                      styles.dropdown,
+                      value ? { borderColor: Colors.DEFAULT_SKY_BLUE } : null
+                    ]}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    data={businessType}
+                    search
+                    maxHeight={250}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={placeholder}
+                    searchPlaceholder="Search..."
+                    value={value}
+                    onChange={item => onChange(item.value)}
+                    renderLeftIcon={() => (
+                      <ShieldCheck
+                        style={styles.icon}
+                        color={value ? Colors.DEFAULT_SKY_BLUE : Colors.DEFAULT_DARK_GRAY}
+                        size={20}
+                      />
+                    )}
+                  />
+                </View>
+              </>
+            )}
+          />
+          {errors[name] && <Text style={styles.errorText}>{errors[name]?.message}</Text>}
+        </>
+      );
+    }
+
+    // ✅ State Dropdown
+    if (name === "state") {
+      return (
+        <>
+          <Controller
+            control={control}
+            name="state"
+            render={({ field: { onChange, value } }) => (
               <View style={styles.dropdownWrapper}>
                 <Dropdown
-                  style={[
-                    styles.dropdown,
-                    value ? { borderColor: Colors.DEFAULT_SKY_BLUE } : null
-                  ]}
+                  style={[styles.dropdown, value ? { borderColor: Colors.DEFAULT_SKY_BLUE } : null]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
                   inputSearchStyle={styles.inputSearchStyle}
                   iconStyle={styles.iconStyle}
-                  data={businessType}
+                  data={states}
                   search
                   maxHeight={250}
-                  labelField="label"
-                  valueField="value"
+                  labelField="name"
+                  valueField="isoCode"
                   placeholder={placeholder}
-                  searchPlaceholder="Search..."
+                  searchPlaceholder="Search state..."
                   value={value}
-                  onChange={item => onChange(item.value)}
+                  onChange={(item) => {
+                    onChange(item.name); // store name in form
+                    setCities(City.getCitiesOfState("IN", item.isoCode)); // fetch cities
+                    // setValue("city", ""); // reset city
+                  }}
                   renderLeftIcon={() => (
                     <ShieldCheck
                       style={styles.icon}
@@ -160,7 +201,47 @@ const CreateSiteScreen = ({ navigation }) => {
               </View>
             )}
           />
-          {errors[name] && <Text style={styles.errorText}>{errors[name]?.message}</Text>}
+          {errors["state"] && <Text style={styles.errorText}>{errors["state"]?.message}</Text>}
+        </>
+      );
+    }
+
+    // ✅ City Dropdown
+    if (name === "city") {
+      return (
+        <>
+          <Controller
+            control={control}
+            name="city"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.dropdownWrapper}>
+                <Dropdown
+                  style={[styles.dropdown, value ? { borderColor: Colors.DEFAULT_SKY_BLUE } : null]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={cities}
+                  search
+                  maxHeight={250}
+                  labelField="name"
+                  valueField="name"
+                  placeholder={placeholder}
+                  searchPlaceholder="Search city..."
+                  value={value}
+                  onChange={(item) => onChange(item.name)}
+                  renderLeftIcon={() => (
+                    <ShieldCheck
+                      style={styles.icon}
+                      color={value ? Colors.DEFAULT_SKY_BLUE : Colors.DEFAULT_DARK_GRAY}
+                      size={20}
+                    />
+                  )}
+                />
+              </View>
+            )}
+          />
+          {errors["city"] && <Text style={styles.errorText}>{errors["city"]?.message}</Text>}
         </>
       );
     }
@@ -180,9 +261,14 @@ const CreateSiteScreen = ({ navigation }) => {
                   styles.textInput,
                   multiline && { height: 100, textAlignVertical: 'top' }
                 ]}
-                secureTextEntry={secure}
+                // secureTextEntry={secure}
+                secureTextEntry={
+                  (name === 'password' && !showPassword) ||
+                    (name === 'cPassword' && !showCPassword)
+                    ? true
+                    : false
+                }
                 value={value}
-                // onChangeText={onChange}
                 onChangeText={(text) => {
                   onChange(text);
 
@@ -194,12 +280,42 @@ const CreateSiteScreen = ({ navigation }) => {
                 }}
                 multiline={multiline}
               />
-              {/* {!multiline && ( */}
-              {!multiline && !!value && (
-                <TouchableOpacity onPress={() => onChange('')} activeOpacity={0.8}>
-                  <CircleX size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+
+              {/* 🔑 show/hide icons */}
+              {name === 'password' && (
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  activeOpacity={0.8}
+                >
+                  {showPassword ? (
+                    <Eye size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                  ) : (
+                    <EyeOff size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                  )}
                 </TouchableOpacity>
               )}
+              {name === 'cPassword' && (
+                <TouchableOpacity
+                  onPress={() => setShowCPassword(!showCPassword)}
+                  activeOpacity={0.8}
+                >
+                  {showCPassword ? (
+                    <Eye size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                  ) : (
+                    <EyeOff size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                  )}
+                </TouchableOpacity>
+              )}
+
+              {/* {!multiline && ( */}
+              {!multiline &&
+                name !== 'password' &&
+                name !== 'cPassword' &&
+                !!value && (
+                  <TouchableOpacity onPress={() => onChange('')} activeOpacity={0.8}>
+                    <CircleX size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                  </TouchableOpacity>
+                )}
             </View>
           )}
         />
@@ -275,69 +391,76 @@ const CreateSiteScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Create Your Professional Website</Text>
-        <Text style={styles.headerText1}>
-          Let's build something amazing together - it only takes a few minutes!
-        </Text>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
 
-        {step === 1 && (
-          <BusinessDetailsForm
-            renderInput={renderInput}
-            onContinue={() => { handleSubmit(handleBusinessData)() }}
-          />
-        )}
-        {step === 2 && (
-          <ThemeColorsForm
-            onContinue={handleThemeData}
-            isLoading={isLoading}
-          />
-        )}
-        {step === 3 && (
-          <AccountSetupForm
-            renderInput={renderInput}
-            onContinue={() => { handleSubmit(handleAccountData)() }}
-          />
-        )}
-      </View>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Create Your Professional Website</Text>
+            <Text style={styles.headerText1}>
+              Let's build something amazing together - it only takes a few minutes!
+            </Text>
+
+            {step === 1 && (
+              <BusinessDetailsForm
+                renderInput={renderInput}
+                onContinue={() => { handleSubmit(handleBusinessData)() }}
+              />
+            )}
+            {step === 2 && (
+              <ThemeColorsForm
+                onContinue={handleThemeData}
+                isLoading={isLoading}
+                onBack={() => setStep(1)}
+              />
+            )}
+            {step === 3 && (
+              <AccountSetupForm
+                renderInput={renderInput}
+                onContinue={() => { handleSubmit(handleAccountData)() }}
+                onBack={() => setStep(2)}
+              />
+            )}
+          </View>
 
 
-      <Text style={styles.socialMediaText}>social media</Text>
+          <Text style={styles.socialMediaText}>social media</Text>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 15, marginVertical: 10, marginHorizontal: 30 }}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ship
-            size={20}
-            color={Colors.DEFAULT_SKY_BLUE}
-          />
-          {/* <Image source={Images.INSTAGRAM} resizeMode="contain" style={styles.socialMediaImages}/> */}
-          {/* <INSTAGRAM width={25} height={25} fill={Colors.DEFAULT_SKY_BLUE} /> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Fish
-            size={20}
-            color={Colors.DEFAULT_SKY_BLUE}
-          />
-          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Sailboat
-            size={20}
-            color={Colors.DEFAULT_SKY_BLUE}
-          />
-          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <LifeBuoy
-            size={20}
-            color={Colors.DEFAULT_SKY_BLUE}
-          />
-          {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
-        </TouchableOpacity>
-      </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 15, marginVertical: 10, marginHorizontal: 30 }}>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ship
+                size={20}
+                color={Colors.DEFAULT_SKY_BLUE}
+              />
+              {/* <Image source={Images.INSTAGRAM} resizeMode="contain" style={styles.socialMediaImages}/> */}
+              {/* <INSTAGRAM width={25} height={25} fill={Colors.DEFAULT_SKY_BLUE} /> */}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Fish
+                size={20}
+                color={Colors.DEFAULT_SKY_BLUE}
+              />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <Sailboat
+                size={20}
+                color={Colors.DEFAULT_SKY_BLUE}
+              />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton}>
+              <LifeBuoy
+                size={20}
+                color={Colors.DEFAULT_SKY_BLUE}
+              />
+              {/* <INSTAGRAM width={30} height={30} fill={Colors.DEFAULT_SKY_BLUE}/> */}
+            </TouchableOpacity>
+          </View>
 
-    </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -18,7 +18,7 @@ export const fetchCategoriesAPI = async () => {
 
         const result = await response.json();
         const categories = result.data;
-        console.log('categories', categories);
+        // console.log('categories', categories);
 
         // Transform the data into the required format
         const allTypes = Object.values(categories).flatMap((cat) =>
@@ -28,7 +28,7 @@ export const fetchCategoriesAPI = async () => {
             }))
         );
 
-        console.log(allTypes);
+        // console.log(allTypes);
 
         return {
             success: true,
@@ -44,45 +44,4 @@ export const fetchCategoriesAPI = async () => {
     }
 };
 
-
-// export const fetchCategoriesAPI = async () => {
-//     try {
-//         const response = await fetch(`/api/business-types/categories`, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-
-//         const result = await response.json();
-//         const categories = result.data;
-//         console.log('categories', categories);
-
-//         // Transform the data into the required format
-//         const allTypes = Object.values(categories).flatMap((cat) =>
-//             cat.types.map((type) => ({
-//                 value: type.value,
-//                 label: `${type.label}`,
-//             }))
-//         );
-
-//         console.log(allTypes);
-
-//         return {
-//             success: true,
-//             data: allTypes
-//         };
-
-//     } catch (error) {
-//         console.error('Fetch categories error:', error);
-//         return {
-//             success: false,
-//             error: error.message
-//         };
-//     }
-// };
 

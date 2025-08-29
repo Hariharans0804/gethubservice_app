@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Colors, Fonts } from '../constants'
+import { Colors, Fonts } from '../../constants'
 import { CircleX, Plus } from 'lucide-react-native';
 
 const DashboardScreen = () => {

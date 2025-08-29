@@ -1,12 +1,13 @@
-import { ActivityIndicator, Alert, Image, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { Colors, Fonts, Images } from '../../constants'
 import { ArrowLeft, CircleArrowRight, CircleX, Eye, EyeOff } from 'lucide-react-native';
 import { loginAPI } from '../../api/postApi';
+import Toast from 'react-native-toast-message';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, setIsLoggedIn }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +26,7 @@ const LoginScreen = ({ navigation }) => {
   const passwordError = useMemo(() => {
     if (!touched.password) return '';
     if (!password) return 'Password is required';
-    if (password.length < 8) return 'Use at least 8 characters';
+    if (password.length < 6) return 'Use at least 6 characters';
     return '';
   }, [password, touched.password]);
 
@@ -41,13 +42,25 @@ const LoginScreen = ({ navigation }) => {
       setLoading(true);
       const data = await loginAPI({ email: email.trim(), password });
       console.log('Login successful:', data);
+
+      // ✅ update global login state
+      setIsLoggedIn(true);
+      navigation.replace('App'); // replace stack so user can't go back
+
       // OPTIONAL: store token/user for later
       // await AsyncStorage.setItem('token', data?.token ?? '');
       // await AsyncStorage.setItem('user', JSON.stringify(data?.user ?? {}));
 
       Alert.alert('Success', 'Logged in successfully.');
-      // Navigate wherever makes sense in your app:
-      // navigation.replace('Home');  // or navigation.navigate('Home')
+      // navigation.navigate('App', { screen: 'Dashboard' });
+
+      // success case
+      Toast.show({
+        type: 'success',
+        text1: 'Login Successful',
+        text2: 'Welcome back!',
+      });
+
     } catch (error) {
       // Normalize common server error shapes
       const msg =
@@ -59,108 +72,124 @@ const LoginScreen = ({ navigation }) => {
         error?.message ||
         'Something went wrong. Please try again.';
       setApiError(msg);
+
+      // error case
+      Toast.show({
+        type: 'error',
+        text1: 'Login Failed',
+        text2: `${msg}`,
+      });
+
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_SKY_BLUE} translucent />
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
 
-      <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => navigation.goBack()}>
-        <ArrowLeft size={30} color={Colors.DEFAULT_SKY_BLUE} />
-      </TouchableOpacity>
+          <View style={styles.container}>
+            <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_SKY_BLUE} translucent />
 
-      <View style={styles.logoContainer}>
-        <Image source={Images.logo} resizeMode='contain' style={styles.image} />
-      </View>
+            <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => navigation.goBack()}>
+              <ArrowLeft size={30} color={Colors.DEFAULT_SKY_BLUE} />
+            </TouchableOpacity>
 
-      <View style={styles.header}>
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.subtitle}>
-          Welcome back — we missed you 👋
-        </Text>
-      </View>
+            <View style={styles.logoContainer}>
+              <Image source={Images.logo} resizeMode='contain' style={styles.image} />
+            </View>
 
-      {/* Server error banner */}
-      {!!apiError && (
+            <View style={styles.header}>
+              <Text style={styles.title}>Login</Text>
+              <Text style={styles.subtitle}>
+                Welcome back — we missed you 👋
+              </Text>
+            </View>
+
+            {/* Server error banner */}
+            {/* {!!apiError && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorBannerText}>{apiError}</Text>
         </View>
-      )}
+      )} */}
 
-      {/* Email */}
-      <Text style={styles.textInputHeading}>Email</Text>
-      <View style={[styles.textInputContainer, !!emailError && { borderColor: Colors.ERROR ?? Colors.DEFAULT_DARK_RED },]}>
-        <TextInput
-          placeholder='abc@gmail.com'
-          placeholderTextColor={Colors.DEFAULT_SKY_BLUE}
-          selectionColor={Colors.DEFAULT_SKY_BLUE}
-          style={[styles.textInput,]}
-          value={email}
-          onChangeText={setEmail}
-          onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          returnKeyType="next"
-          textContentType="emailAddress"
-        />
-        {email && (
-          <TouchableOpacity onPress={() => setEmail('')} activeOpacity={0.8}>
-            <CircleX size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
-          </TouchableOpacity>
-        )}
-      </View>
-      {!!emailError && <Text style={styles.errorText}>{emailError}</Text>}
+            {/* Email */}
+            <Text style={styles.textInputHeading}>Email</Text>
+            <View style={[styles.textInputContainer, !!emailError && { borderColor: Colors.ERROR ?? Colors.DEFAULT_DARK_RED },]}>
+              <TextInput
+                placeholder='abc@gmail.com'
+                placeholderTextColor={Colors.DEFAULT_SKY_BLUE}
+                selectionColor={Colors.DEFAULT_SKY_BLUE}
+                style={[styles.textInput,]}
+                value={email}
+                onChangeText={setEmail}
+                onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                returnKeyType="next"
+                textContentType="emailAddress"
+              />
+              {email && (
+                <TouchableOpacity onPress={() => setEmail('')} activeOpacity={0.8}>
+                  <CircleX size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
+                </TouchableOpacity>
+              )}
+            </View>
+            {!!emailError && <Text style={styles.errorText}>{emailError}</Text>}
 
-      {/* Password */}
-      <Text style={styles.textInputHeading}>Password</Text>
-      <View style={[styles.textInputContainer, !!passwordError && { borderColor: Colors.ERROR ?? Colors.DEFAULT_DARK_RED },]}>
-        <TextInput
-          placeholder='your password'
-          placeholderTextColor={Colors.DEFAULT_SKY_BLUE}
-          selectionColor={Colors.DEFAULT_SKY_BLUE}
-          style={[styles.textInput,]}
-          value={password}
-          onChangeText={setPassword}
-          onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-          secureTextEntry={!showPassword}
-          autoCapitalize="none"
-          returnKeyType="go"
-          textContentType="password"
-        />
-        <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)} activeOpacity={0.8}>
-          {showPassword ? (
-            <Eye size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
-          ) : (
-            <EyeOff size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
-          )}
-        </TouchableOpacity>
-      </View>
-      {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+            {/* Password */}
+            <Text style={styles.textInputHeading}>Password</Text>
+            <View style={[styles.textInputContainer, !!passwordError && { borderColor: Colors.ERROR ?? Colors.DEFAULT_DARK_RED },]}>
+              <TextInput
+                placeholder='your password'
+                placeholderTextColor={Colors.DEFAULT_SKY_BLUE}
+                selectionColor={Colors.DEFAULT_SKY_BLUE}
+                style={[styles.textInput,]}
+                value={password}
+                onChangeText={setPassword}
+                onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                returnKeyType="go"
+                textContentType="password"
+              />
+              <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)} activeOpacity={0.8}>
+                {showPassword ? (
+                  <Eye size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
+                ) : (
+                  <EyeOff size={20} color={Colors.DEFAULT_SKY_BLUE} style={{ marginRight: 5 }} />
+                )}
+              </TouchableOpacity>
+            </View>
+            {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
 
-      <TouchableOpacity
-        style={[styles.headerButton]}
-        activeOpacity={0.8}
-        onPress={handleLogin}
-      // disabled={!formValid}
-      >
-        {loading ? (
-          <ActivityIndicator
-            size="large"
-            color={Colors.DEFAULT_WHITE}
-          />
-        ) : (
-          <>
-            <Text style={styles.headerButtonText}>Login</Text>
-            <CircleArrowRight size={22} color={Colors.DEFAULT_WHITE} />
-          </>
-        )}
-      </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.headerButton]}
+              activeOpacity={0.8}
+              onPress={handleLogin}
+            // disabled={!formValid}
+            >
+              {loading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={Colors.DEFAULT_WHITE}
+                  style={{ paddingVertical: 11, }}
+                />
+              ) : (
+                <>
+                  <Text style={styles.headerButtonText}>Login</Text>
+                  <CircleArrowRight size={22} color={Colors.DEFAULT_WHITE} />
+                </>
+              )}
+            </TouchableOpacity>
 
-    </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   )
 }
 

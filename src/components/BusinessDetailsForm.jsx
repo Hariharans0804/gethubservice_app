@@ -5,19 +5,6 @@ import { useForm } from 'react-hook-form';
 
 const BusinessDetailsForm = ({ onContinue, renderInput }) => {
 
-    const [value, setValue] = useState(null);
-    const [isFocus, setIsFocus] = useState(false);
-
-    const renderLabel = () => {
-        if (value || isFocus) {
-            return (
-                <Text style={[styles.label, (isFocus || value) && { color: Colors.DEFAULT_SKY_BLUE }]}>
-                    Business Type
-                </Text>
-            );
-        }
-        return null;
-    };
 
     return (
         <View style={{ /*borderWidth: 1,*/ borderRadius: 12, backgroundColor: Colors.DEFAULT_WHITE, width: '100%', marginVertical: 10, paddingVertical: 20, paddingHorizontal: 10 }}>
@@ -47,10 +34,6 @@ const BusinessDetailsForm = ({ onContinue, renderInput }) => {
                 <Text style={styles.getHubServiceText2}>(.gethubservice)</Text>
             </View>
             {renderInput('websiteAddress', 'your company')}
-
-            {/* <View style={{ alignItems: 'flex-end',marginHorizontal: 15 }}>
-                <Text style={styles.getHubServiceText}>.gethubservice</Text>
-            </View> */}
 
             <TouchableOpacity
                 style={[styles.headerButton]}

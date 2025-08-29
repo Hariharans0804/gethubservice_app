@@ -2,13 +2,13 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Colors, Fonts, Images } from '../constants';
-import { drawerList } from '../data/drawerList';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
 
 const CustomDrawerContent = (props) => {
 
     const { routeNames, index } = props.state;
     const focusedRoute = routeNames[index];
+    const { drawerList } = props; // 🔑 pass drawerList dynamically
 
     const [expanded, setExpanded] = useState({}); // store expansion states
 
