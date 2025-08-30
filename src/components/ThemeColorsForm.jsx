@@ -6,7 +6,7 @@ import { colorCombos, themes } from '../data/createsiteData';
 
 
 
-const ThemeColorsForm = ({ onContinue }) => {
+const ThemeColorsForm = ({ onContinue, onBack }) => {
     const [selectedTheme, setSelectedTheme] = useState('1');
     const [selectedColorCombo, setSelectedColorCombo] = useState('1');
 
@@ -84,9 +84,15 @@ const ThemeColorsForm = ({ onContinue }) => {
                 renderItem={renderColorCombo}
             />
 
-            <TouchableOpacity style={[styles.headerButton]} activeOpacity={0.8} onPress={onContinue}>
-                <Text style={[styles.headerButtonText]}>Continue to Account Setup</Text>
-            </TouchableOpacity>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <TouchableOpacity style={[styles.headerButton, { backgroundColor: Colors.DEFAULT_LIGHT_BLUE_2, borderWidth: 1.2, borderColor: Colors.DEFAULT_DARK_GRAY }]} onPress={onBack} >
+                    <Text style={[styles.headerButtonText, { color: Colors.DEFAULT_BLACK }]}>Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.headerButton]} activeOpacity={0.8} onPress={onContinue}>
+                    <Text style={[styles.headerButtonText]}>Continue to Account Setup</Text>
+                </TouchableOpacity>
+            </View>
 
         </View>
         // {/* </ScrollView> */ }
@@ -227,11 +233,11 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     headerButtonText: {
-        fontSize: 20,
-        lineHeight: 20 * 1.4,
+        fontSize: 16,
+        lineHeight: 16 * 1.4,
         fontFamily: Fonts.POPPINS_SEMI_BOLD,
         color: Colors.DEFAULT_WHITE,
-        paddingHorizontal: 30,
+        paddingHorizontal: 15,
         paddingVertical: 15,
     },
 });

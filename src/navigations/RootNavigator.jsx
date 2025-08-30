@@ -1,17 +1,20 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { Colors } from '../constants';
 import CustomDrawerContent from './CustomDrawerContent';
-import { drawerList } from '../data/drawerList';
+import { drawerListAfterLogin, drawerListBeforeLogin } from '../data/drawerList';
 import { LoginScreen } from '../screens/Auth';
+import { CustomHeader } from '../components';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 
-const AppDrawer = () => {
+const AppDrawer = ({ isLoggedIn }) => {
+
+    const drawerList = isLoggedIn ? drawerListAfterLogin : drawerListBeforeLogin;
 
     const getAllScreens = () => {
         let screens = [];
@@ -28,20 +31,24 @@ const AppDrawer = () => {
     return (
         <Drawer.Navigator
             screenOptions={({ navigation }) => ({
+                // headerShown: false,
                 drawerStyle: {
                     backgroundColor: Colors.DEFAULT_WHITE,
                     // width: 320,
                 },
             })}
-            initialRouteName='Home'
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            initialRouteName={isLoggedIn ? 'Dashboard' : 'Home'}
+            drawerContent={(props) => <CustomDrawerContent {...props} drawerList={drawerList} />}
         >
-            {/* {drawerList.map((item, index) => ( */}
+
             {getAllScreens().map((item, index) => (
                 <Drawer.Screen
                     key={index}
                     name={item.route}
                     component={item.component}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title={item.label} navigation={navigation} />
+                    })}
                 />
             ))}
         </Drawer.Navigator>
@@ -50,17 +57,22 @@ const AppDrawer = () => {
 
 
 const RootNavigator = () => {
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='App' component={AppDrawer} />
-            <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name="App">
+                {() => <AppDrawer isLoggedIn={isLoggedIn} />}
+            </Stack.Screen>
+            <Stack.Screen name="Login">
+                {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+            </Stack.Screen>
         </Stack.Navigator>
     )
 }
 
 export default RootNavigator
-
-const styles = StyleSheet.create({})
 
 {/* <Drawer.Screen name='Home' component={HomeScreen} />
             <Drawer.Screen name='About' component={AboutScreen} />

@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.header}>
           <Text style={styles.headerText}>Build Professional Websites That Grow With Your Business</Text>
           <Text style={styles.headerText1}>Choose subscription for automatic updates & AI features, or ownership for complete control. Either way, get a stunning website built for your industry.</Text>
-          <TouchableOpacity style={styles.headerButton} onPress={() => navigation.navigate("Login")}>
+          <TouchableOpacity style={styles.headerButton}>
             <Text style={styles.headerButtonText}>Start Free Trial</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerButton2}>

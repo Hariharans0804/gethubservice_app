@@ -1,36 +1,52 @@
-// components/CustomHeader.js
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Colors } from '../constants';
-import { Home } from 'lucide-react-native';
+import { Colors, Fonts } from '../constants';
+import { Menu } from 'lucide-react-native';
 
-const CustomHeader = ({ navigation, title, icon: Icon }) => {
+const CustomHeader = ({ title, navigation }) => {
+
     return (
-        <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-            paddingVertical: 10,
-            backgroundColor: Colors.DEFAULT_WHITE,
-            elevation: 4
-        }}>
-            {/* Left icon (toggle drawer or back) */}
-            <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-                {Icon ? <Icon size={28} color={Colors.DEFAULT_SKY_BLUE} /> : <Home size={28} color={Colors.DEFAULT_SKY_BLUE} />}
+        <View style={styles.headerContainer}>
+            <TouchableOpacity style={{ flex: 0.5 }} onPress={() => navigation.toggleDrawer()} activeOpacity={0.8}>
+                <Menu size={32} color={Colors.DEFAULT_WHITE} />
             </TouchableOpacity>
 
-            {/* Title */}
-            <Text style={{ fontSize: 18, fontWeight: '600', color: Colors.DEFAULT_BLACK }}>
-                {title}
-            </Text>
+            <Text style={[styles.headerText, { flex: 1.5 }]}>{title}</Text>
 
-            {/* Right placeholder (profile/settings etc.) */}
-            <TouchableOpacity onPress={() => alert("Right icon pressed")}>
-                <Text style={{ color: Colors.DEFAULT_SKY_BLUE }}>⚙️</Text>
+            <TouchableOpacity style={[styles.loginButton, { flex: 1 }]} activeOpacity={0.8} onPress={() => navigation.navigate("Login")}>
+                <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
         </View>
     );
 };
 
 export default CustomHeader;
+
+const styles = StyleSheet.create({
+    headerContainer: {
+        height: 120,
+        backgroundColor: Colors.DEFAULT_SKY_BLUE,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 15,
+        paddingTop: 25
+    },
+    headerText: {
+        fontSize: 22,
+        lineHeight: 22 * 1.4,
+        fontFamily: Fonts.POPPINS_SEMI_BOLD,
+        color: Colors.DEFAULT_WHITE
+    },
+    loginButton: {
+        backgroundColor: Colors.DEFAULT_LIGHT_YELLOW,
+        borderRadius: 8
+    },
+    loginText: {
+        fontSize: 20,
+        lineHeight: 20 * 1.4,
+        fontFamily: Fonts.POPPINS_SEMI_BOLD,
+        color: Colors.DEFAULT_SKY_BLUE,
+        padding: 5,
+        textAlign: 'center'
+    }
+})

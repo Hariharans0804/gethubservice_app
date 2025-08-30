@@ -3,7 +3,7 @@ import React from 'react'
 import { Colors, Fonts } from '../constants'
 import { useForm } from 'react-hook-form'
 
-const AccountSetupForm = ({ renderInput, onContinue }) => {
+const AccountSetupForm = ({ renderInput, onContinue, onBack }) => {
 
     return (
         <View style={{ /*borderWidth: 1,*/ borderRadius: 12, backgroundColor: Colors.DEFAULT_WHITE, width: '100%', marginVertical: 10, paddingVertical: 20, paddingHorizontal: 10 }}>
@@ -33,33 +33,31 @@ const AccountSetupForm = ({ renderInput, onContinue }) => {
             {renderInput('phoneNumber', '1234567890')}
 
             <Text style={styles.textInputHeading}>Password</Text>
-            {/* {renderInput('password', 'Enter a strong password', true)} */}
             {renderInput('password', 'Enter a strong password', { secure: true })}
 
             <Text style={styles.textInputHeading}>Confirm Password</Text>
-            {/* {renderInput('cPassword', 'Confirm your password', true)} */}
             {renderInput('cPassword', 'Confirm strong password', { secure: true })}
 
             <Text style={styles.textInputHeading}>Address</Text>
-            {/* {renderInput('address', '123 main street...', false, true)} */}
             {renderInput('address', '123 main street...', { multiline: true })}
-
-            <Text style={styles.textInputHeading}>City</Text>
-            {renderInput('city', 'Kollam')}
 
             <Text style={styles.textInputHeading}>State</Text>
             {renderInput('state', 'Kerala')}
 
+            <Text style={styles.textInputHeading}>City</Text>
+            {renderInput('city', 'Kollam')}
+
             <Text style={styles.textInputHeading}>Pincode</Text>
             {renderInput('pincode', '123456')}
 
-            <TouchableOpacity
-                style={[styles.headerButton]}
-                activeOpacity={0.8}
-                onPress={onContinue}
-            >
-                <Text style={[styles.headerButtonText]}>Cretae My Website</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <TouchableOpacity style={[styles.headerButton, { backgroundColor: Colors.DEFAULT_LIGHT_BLUE_2, borderWidth: 1.2, borderColor: Colors.DEFAULT_DARK_GRAY }]} onPress={onBack} >
+                    <Text style={[styles.headerButtonText, { color: Colors.DEFAULT_BLACK }]}>Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.headerButton]} activeOpacity={0.8} onPress={onContinue}>
+                    <Text style={[styles.headerButtonText]}>Continue to Account Setup</Text>
+                </TouchableOpacity>
+            </View>
 
         </View>
     )
@@ -146,11 +144,11 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     headerButtonText: {
-        fontSize: 20,
-        lineHeight: 20 * 1.4,
+        fontSize: 16,
+        lineHeight: 16 * 1.4,
         fontFamily: Fonts.POPPINS_SEMI_BOLD,
         color: Colors.DEFAULT_WHITE,
-        paddingHorizontal: 30,
+        paddingHorizontal: 15,
         paddingVertical: 15,
     },
     errorText: {
