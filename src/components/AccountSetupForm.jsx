@@ -42,10 +42,10 @@ const AccountSetupForm = ({ renderInput, onContinue, onBack }) => {
             {renderInput('address', '123 main street...', { multiline: true })}
 
             <Text style={styles.textInputHeading}>State</Text>
-            {renderInput('state', 'Kerala')}
+            {renderInput('state', 'select your state')}
 
             <Text style={styles.textInputHeading}>City</Text>
-            {renderInput('city', 'Kollam')}
+            {renderInput('city', 'select your city')}
 
             <Text style={styles.textInputHeading}>Pincode</Text>
             {renderInput('pincode', '123456')}

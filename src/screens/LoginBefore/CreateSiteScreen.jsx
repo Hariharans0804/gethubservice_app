@@ -181,14 +181,17 @@ const CreateSiteScreen = ({ navigation }) => {
                   search
                   maxHeight={250}
                   labelField="name"
-                  valueField="isoCode"
+                  valueField="name"
                   placeholder={placeholder}
                   searchPlaceholder="Search state..."
                   value={value}
                   onChange={(item) => {
+                    console.log("📍 Selected State:", item);   // 👈 full state object log
+                    console.log("📍 State Value:", item.name);  // 👈 only name log
+
                     onChange(item.name); // store name in form
                     setCities(City.getCitiesOfState("IN", item.isoCode)); // fetch cities
-                    // setValue("city", ""); // reset city
+                    setValue("city", ""); // reset city
                   }}
                   renderLeftIcon={() => (
                     <ShieldCheck
@@ -229,7 +232,12 @@ const CreateSiteScreen = ({ navigation }) => {
                   placeholder={placeholder}
                   searchPlaceholder="Search city..."
                   value={value}
-                  onChange={(item) => onChange(item.name)}
+                  onChange={(item) => {
+                    console.log("🏙️ Selected City:", item);   // 👈 full city object log
+                    console.log("🏙️ City Value:", item.name); // 👈 only name log
+
+                    onChange(item.name);
+                  }}
                   renderLeftIcon={() => (
                     <ShieldCheck
                       style={styles.icon}
