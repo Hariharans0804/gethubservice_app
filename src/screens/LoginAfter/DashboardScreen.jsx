@@ -1,11 +1,20 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
 import { CircleX, Plus } from 'lucide-react-native';
+import { getFromStorage } from '../../utils/mmkvStorage';
 
 const DashboardScreen = () => {
 
     const [searchText, setSearchText] = useState('');
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const userData = getFromStorage("users");
+        if (userData) {
+            setUser(userData);
+        }
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -33,6 +42,16 @@ const DashboardScreen = () => {
                     <Text style={styles.addButtonText}>Add</Text>
                 </TouchableOpacity>
             </View>
+
+            {user ? (
+                <>
+                    <Text style={{ fontSize: 18 }}>Welcome {user.userName} 👋</Text>
+                    <Text>Email: {user.userEmail}</Text>
+                    <Text>Role: {user.userRole}</Text>
+                </>
+            ) : (
+                <Text>No user data found</Text>
+            )}
 
         </View>
     )
