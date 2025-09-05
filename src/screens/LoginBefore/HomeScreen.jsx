@@ -1,7 +1,5 @@
 import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-// import Animated, { Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
-// import { Drawer, Header, Overlay } from '../components';
 import { Colors, Fonts, Images } from '../../constants';
 import { products } from '../../data/products';
 import { everything } from '../../data/everything';

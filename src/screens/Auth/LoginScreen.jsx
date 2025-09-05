@@ -4,6 +4,7 @@ import { Colors, Fonts, Images } from '../../constants'
 import { ArrowLeft, CircleArrowRight, CircleX, Eye, EyeOff } from 'lucide-react-native';
 import { loginAPI } from '../../api/postApi';
 import Toast from 'react-native-toast-message';
+import { getFromStorage, saveToStorage } from '../../utils/mmkvStorage';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -47,9 +48,17 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
       setIsLoggedIn(true);
       navigation.replace('App'); // replace stack so user can't go back
 
-      // OPTIONAL: store token/user for later
-      // await AsyncStorage.setItem('token', data?.token ?? '');
-      // await AsyncStorage.setItem('user', JSON.stringify(data?.user ?? {}));
+      // OPTIONAL: store token/user for later using mmkv storage
+      const { user, token } = data;
+      const userName = user?.name;
+      const userEmail = user?.email;
+      const userRole = user.role;
+
+      saveToStorage('users', { userName, userEmail, userRole });
+      saveToStorage('token', token);
+      // Check storage works
+      console.log('Stored User:', getFromStorage('users'));
+      console.log('Stored Token:', getFromStorage('token'));
 
       Alert.alert('Success', 'Logged in successfully.');
       // navigation.navigate('App', { screen: 'Dashboard' });
