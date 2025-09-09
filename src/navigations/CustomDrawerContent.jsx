@@ -72,14 +72,30 @@ const CustomDrawerContent = (props) => {
                         <DrawerItem
                             key={i}
                             label={item.label}
-                            onPress={() => props.navigation.navigate(item.route)}
-                            icon={() =>
-                                <item.icon
-                                    size={30}
-                                    color={focusedRoute === item.route ? Colors.DEFAULT_WHITE : Colors.DEFAULT_SKY_BLUE}
-                                />
-                            }
-                            focused={focusedRoute === item.route}
+                            onPress={() => props.navigation.navigate(item.route || item.id)}
+                            icon={(props) => {
+                                if (typeof item.icon === 'string') {
+                                    return (
+                                        <Text style={{
+                                            fontSize: props.size,
+                                            color: props.color,
+                                            width: props.size,
+                                            height: props.size,
+                                            textAlign: 'center',
+                                            textAlignVertical: 'center'
+                                        }}>
+                                            {item.icon}
+                                        </Text>
+                                    );
+                                }
+                                // For component icons (from drawerListBeforeLogin)
+                                if (item.icon) {
+                                    const Icon = item.icon;
+                                    return <Icon size={props.size} color={props.color} />;
+                                }
+                                return null;
+                            }}
+                            focused={focusedRoute === (item.route || item.id)}
                             activeBackgroundColor={Colors.DEFAULT_SKY_BLUE}
                             activeTintColor={Colors.DEFAULT_WHITE}
                             inactiveTintColor={Colors.DEFAULT_SKY_BLUE}

@@ -1,6 +1,7 @@
 import AccountSetupForm from "./AccountSetupForm";
 import BusinessDetailsForm from "./BusinessDetailsForm";
 import CustomHeader from "./CustomHeader";
+import OnboardCard from "./OnboardCard";
 import ThemeColorsForm from "./ThemeColorsForm";
 
-export { BusinessDetailsForm, ThemeColorsForm, AccountSetupForm, CustomHeader };
+export { BusinessDetailsForm, ThemeColorsForm, AccountSetupForm, CustomHeader, OnboardCard };

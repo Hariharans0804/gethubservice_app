@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
 import { CircleX, Plus } from 'lucide-react-native';
 import { getFromStorage } from '../../utils/mmkvStorage';
+import { fetchSidebarData } from '../../api/getApi';
 
 const DashboardScreen = () => {
 
@@ -14,6 +15,7 @@ const DashboardScreen = () => {
         if (userData) {
             setUser(userData);
         }
+        fetchSidebarData();
     }, []);
 
     return (

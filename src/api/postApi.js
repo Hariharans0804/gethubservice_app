@@ -3,7 +3,7 @@ import { API_HOST } from '@env';
 
 export const loginAPI = async (loginData) => {
     try {
-        const response = await fetch(`${API_HOST}/api/users/login`, {
+        const response = await fetch(`${API_HOST}/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export const loginAPI = async (loginData) => {
 export const siteCreationAPI = async (siteData) => {
     try {
         console.log('🚀 API Request Payload:', {
-            url: `${API_HOST}/api/site-creation/create-public`,
+            url: `${API_HOST}/site-creation/create-public`,
             data: siteData
         });
         const transformedData = {
@@ -77,7 +77,7 @@ export const siteCreationAPI = async (siteData) => {
 
         console.log('📤 Transformed Request Data:', transformedData);
 
-        const response = await fetch(`${API_HOST}/api/site-creation/create-public`, {
+        const response = await fetch(`${API_HOST}/site-creation/create-public`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

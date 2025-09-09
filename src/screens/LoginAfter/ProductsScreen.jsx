@@ -1,50 +1,41 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
 import { Plus, CircleX } from 'lucide-react-native'
 
-const customerFields = [
+const productFields = [
   {
     key: "name",
-    label: "Customer Name",
+    label: "Product Name",
     type: "text",
-    placeholder: "Enter customer name",
+    placeholder: "Enter product name",
     required: true,
-  },
-  {
-    key: "email",
-    label: "Email",
-    type: "text",
-    placeholder: "Enter customer email",
+  }, {
+    key: "price",
+    label: "Product Price",
+    type: "number",
+    placeholder: "Enter product price",
     required: true,
-  },
-  {
-    key: "phone",
-    label: "Phone Number",
-    type: "text",
-    placeholder: "Enter customer phone number",
-    required: true,
-  },
-  {
-    key: "address",
-    label: "Address",
+  }, {
+    key: "description",
+    label: "Product Description",
     type: "textarea",
-    placeholder: "Enter customer address",
+    placeholder: "Enter product description",
     required: false,
   }
 ];
 
-const CustomerScreen = ({ navigation }) => {
+const ProductsScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
-  const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  const addCustomer = () => {
-    console.log('customerData', customers);
+  const addProduct = () => {
+    console.log('Products after addition:', products);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Customers</Text>
+      <Text style={styles.heading}>Products</Text>
 
       <View style={styles.searchContainer}>
         <View style={styles.textInputContainer}>
@@ -66,10 +57,10 @@ const CustomerScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('Add', {
-            fields: customerFields,
-            title: 'Customer',
-            setData: setCustomers,
-            onSubmit: addCustomer,
+            fields: productFields,
+            title: 'Product',
+            setData: setProducts,
+            onSubmit: addProduct,
           })}
         >
           <Plus size={20} color={Colors.DEFAULT_WHITE} />
@@ -78,16 +69,15 @@ const CustomerScreen = ({ navigation }) => {
       </View>
 
       <ScrollView style={styles.listContainer}>
-        {customers.length === 0 ? (
-          <Text style={styles.emptyText}>No customers yet</Text>
+        {products.length === 0 ? (
+          <Text style={styles.emptyText}>No products yet</Text>
         ) : (
-          customers.map((customer) => (
-            <View key={customer.id} style={styles.customerCard}>
-              <Text style={styles.customerName}>{customer.name}</Text>
-              <Text style={styles.customerEmail}>{customer.email}</Text>
-              <Text style={styles.customerPhone}>{customer.phone}</Text>
-              {customer.address && (
-                <Text style={styles.customerAddress}>{customer.address}</Text>
+          products.map((product) => (
+            <View key={product.id} style={styles.productCard}>
+              <Text style={styles.productName}>{product.name}</Text>
+              <Text style={styles.productPrice}>Price: ${product.price}</Text>
+              {product.description && (
+                <Text style={styles.productDescription}>{product.description}</Text>
               )}
             </View>
           ))
@@ -97,7 +87,7 @@ const CustomerScreen = ({ navigation }) => {
   )
 }
 
-export default CustomerScreen
+export default ProductsScreen
 
 const styles = StyleSheet.create({
   container: {
@@ -163,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.POPPINS_MEDIUM,
     color: Colors.DEFAULT_DARK_GRAY
   },
-  customerCard: {
+  productCard: {
     backgroundColor: Colors.DEFAULT_WHITE,
     padding: 15,
     marginBottom: 10,
@@ -171,25 +161,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.DEFAULT_GRAY,
   },
-  customerName: {
+  productName: {
     fontSize: 18,
     fontFamily: Fonts.POPPINS_SEMI_BOLD,
     color: Colors.DEFAULT_SKY_BLUE,
     marginBottom: 5,
   },
-  customerEmail: {
+  productPrice: {
     fontSize: 16,
     fontFamily: Fonts.POPPINS_MEDIUM,
     color: Colors.DEFAULT_BLACK,
     marginBottom: 5,
   },
-  customerPhone: {
-    fontSize: 16,
-    fontFamily: Fonts.POPPINS_MEDIUM,
-    color: Colors.DEFAULT_BLACK,
-    marginBottom: 5,
-  },
-  customerAddress: {
+  productDescription: {
     fontSize: 14,
     fontFamily: Fonts.POPPINS_REGULAR,
     color: Colors.DEFAULT_DARK_GRAY,

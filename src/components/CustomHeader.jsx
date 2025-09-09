@@ -1,15 +1,15 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import React from 'react';
 import { Colors, Fonts, Images } from '../constants';
-import { getFromStorage, saveToStorage } from '../utils/mmkvStorage';
+import { getFromStorage, removeFromStorage } from '../utils/mmkvStorage';
 import Toast from 'react-native-toast-message';
 
 const CustomHeader = ({ title, navigation, isLoggedIn, setIsLoggedIn }) => {
 
     const handleLogout = () => {
         // clear token & user data
-        saveToStorage('token', null);
-        saveToStorage('users', null);
+        removeFromStorage('token', null);
+        removeFromStorage('users', null);
 
         // Check storage works
         console.log('Stored User:', getFromStorage('users'));

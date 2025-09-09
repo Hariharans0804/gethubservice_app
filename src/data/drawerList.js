@@ -1,6 +1,6 @@
-import { Anchor, Angry, Anvil, Baby, BriefcaseBusiness, Cable, Dam, Factory, Folder, Gem, Headset, Home, Layout, LayoutDashboard, MSquare, Settings, ShieldPlus, ShowerHead, Smile, University, Users } from 'lucide-react-native';
+import { Anchor, Angry, Anvil, Baby, BriefcaseBusiness, Cable, Dam, Factory, Folder, Gem, Headset, Home, Layout, LayoutDashboard, MSquare, Settings, ShieldPlus, ShoppingBasket, ShowerHead, Smile, University, Users } from 'lucide-react-native';
 import { AboutScreen, BlogScreen, CreateSiteScreen, FeaturesScreen, GetStartedScreen, HomeScreen, IndustriesScreen, PricingScreen, SiteNeedsScreen, SupportScreen, TemplatesScreen, WhyChooseUsScreen } from '../screens/LoginBefore';
-import { BusinessesScreen, CustomerScreen, DashboardScreen, JobsScreen, LeadsScreen, ServicesScreen, SettingsScreen, SiteBuilderScreen } from '../screens/LoginAfter';
+import { BusinessesScreen, CustomerScreen, DashboardScreen, JobsScreen, LeadsScreen, ProductsScreen, ServicesScreen, SettingsScreen, SiteBuilderScreen } from '../screens/LoginAfter';
 
 
 // drawerBefore.js
@@ -28,9 +28,10 @@ export const drawerListBeforeLogin = [
 // drawerAfter.js
 export const drawerListAfterLogin = [
     { label: "Dashboard", route: "Dashboard", icon: LayoutDashboard, component: DashboardScreen },
+    { label: "Products", route: "Products", icon: ShoppingBasket, component: ProductsScreen },
+    { label: "Customer", route: "Customer", icon: Users, component: CustomerScreen },
     { label: "Businesses", route: "Businesses", icon: BriefcaseBusiness, component: BusinessesScreen },
     { label: "Site Builder", route: "SiteBuilder", icon: University, component: SiteBuilderScreen },
-    { label: "Customer", route: "Customer", icon: Users, component: CustomerScreen },
     { label: "Services", route: "Services", icon: ShowerHead, component: ServicesScreen },
     { label: "Jobs", route: "Jobs", icon: Smile, component: JobsScreen },
     { label: "Leads", route: "Leads", icon: Headset, component: LeadsScreen },
