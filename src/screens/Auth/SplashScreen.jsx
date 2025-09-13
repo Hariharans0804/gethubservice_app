@@ -1,8 +1,9 @@
 import { Image, StatusBar, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { Colors, Fonts, Images } from '../../constants'
-import { getFromStorage } from '../../utils/mmkvStorage'
 import { useNavigation } from '@react-navigation/native'
+// import { getFromStorage } from '../../utils/mmkvStorage'
+import { getFromStorage } from '../../utils'
 
 const SplashScreen = () => {
 
@@ -24,7 +25,7 @@ const SplashScreen = () => {
 
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_GREEN} translucent />
+            <StatusBar barStyle="dark-content" backgroundColor={Colors.DEFAULT_LIGHT_BLUE_2} translucent />
             <Image source={Images.logo} resizeMode='contain' style={styles.image} />
         </View>
     )

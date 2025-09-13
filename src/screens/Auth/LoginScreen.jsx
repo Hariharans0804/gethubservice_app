@@ -4,7 +4,8 @@ import { Colors, Fonts, Images } from '../../constants'
 import { ArrowLeft, CircleArrowRight, CircleX, Eye, EyeOff } from 'lucide-react-native';
 import { loginAPI } from '../../api/postApi';
 import Toast from 'react-native-toast-message';
-import { getFromStorage, saveToStorage } from '../../utils/mmkvStorage';
+import { getFromStorage, saveToStorage } from '../../utils';
+// import { getFromStorage, saveToStorage } from '../../utils/mmkvStorage';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
@@ -46,7 +47,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
 
       // ✅ update global login state
       setIsLoggedIn(true);
-      navigation.replace('App'); // replace stack so user can't go back
+      // navigation.replace('App'); // replace stack so user can't go back
 
       // OPTIONAL: store token/user for later using mmkv storage
       const { user, token } = data;
@@ -102,9 +103,9 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
           <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_SKY_BLUE} translucent />
 
-            <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => navigation.goBack()}>
+            {/* <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => navigation.goBack()}>
               <ArrowLeft size={30} color={Colors.DEFAULT_SKY_BLUE} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <View style={styles.logoContainer}>
               <Image source={Images.logo} resizeMode='contain' style={styles.image} />
@@ -185,7 +186,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
                 <ActivityIndicator
                   size="large"
                   color={Colors.DEFAULT_WHITE}
-                  style={{ paddingVertical: 11, }}
+                  style={{ paddingVertical: 8, }}
                 />
               ) : (
                 <>
@@ -211,16 +212,16 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // backgroundColor: Colors.DEFAULT_LIGHT_BLUE_2,
     // paddingHorizontal: 20,
-    paddingTop: 70
+    paddingTop:40
   },
   logoContainer: {
     width: '100%',
     // borderWidth: 1,
-    marginTop: 20
+    // marginTop: 20
   },
   image: {
     width: '100%',
-    height: 200
+    height: 180
   },
   header: {
     gap: 6,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.DEFAULT_SKY_BLUE,
     borderRadius: 10,
     marginHorizontal: 20,
-    marginTop: 50,
+    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,47 +1,47 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import FormInputs from '../../components/FormInputs'
 import { Colors, Fonts } from '../../constants'
+import { FormInputs } from '../../components'
+import { buildSchema } from '../../utils'
 
 const AddScreen = ({ route, navigation }) => {
-  const { fields, title, onSubmit, setData } = route.params;
+  const { fields, title, onSubmit, setData, data } = route.params;
 
-  // Dynamically generate Yup schema based on fields
-  const schema = Yup.object().shape(
-    fields.reduce((acc, field) => {
-      let validation = Yup.string()
-      if (field.type === 'number') {
-        validation = Yup.number().typeError('Must be a number')
-      }
-      if (field.required) {
-        validation = validation.required(`${field.label} is required`)
-      }
-      acc[field.key] = validation
-      return acc
-    }, {})
-  )
+  const schema = buildSchema(fields);
 
   const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: fields.reduce((acc, field) => {
-      acc[field.key] = ''
-      return acc
+      let value = data ? data[field.key] ?? '' : '';
+      // 👇 ensure numbers are converted to string for TextInput
+      acc[field.key] = typeof value === 'number' ? value.toString() : value;
+      return acc;
     }, {}),
     resolver: yupResolver(schema)
-  })
+  });
 
-  const handleFormSubmit = (data) => {
-    setData(prev => [...prev, { id: Date.now(), ...data }]);
+  const handleFormSubmit = (formData) => {
+    if (data) {
+      // 👇 update existing
+      setData(prev =>
+        prev.map(p => p.id === data.id ? { ...p, ...formData } : p)
+      );
+    } else {
+      // 👇 create new
+      setData(prev => [...prev, { id: Date.now(), ...formData }]);
+    }
+
     onSubmit();
-    console.log('data', data);
     navigation.goBack();
-  }
+  };
+
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.heading}>{title}</Text>
+      <Text style={styles.heading}>
+        {data ? `Edit ${title}` : `Create ${title}`}
+      </Text>
 
       {fields.map((field) => (
         <FormInputs
@@ -52,6 +52,8 @@ const AddScreen = ({ route, navigation }) => {
           placeholder={field.placeholder}
           multiline={field.type === 'textarea'}
           errors={errors}
+          type={field.type}          // 👈 Pass type
+          options={field.options}    // 👈 Pass options for dropdown
         />
       ))}
 
@@ -59,7 +61,9 @@ const AddScreen = ({ route, navigation }) => {
         style={styles.button}
         onPress={handleSubmit(handleFormSubmit)}
       >
-        <Text style={styles.buttonText}>Add {title}</Text>
+        <Text style={styles.buttonText}>
+          {data ? `Update ${title}` : `Add ${title}`}
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   )
@@ -71,7 +75,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.DEFAULT_WHITE,
-    padding: 20
+    padding: 20,
+    // borderWidth:1,
+    // borderColor:'red'
   },
   heading: {
     fontSize: 24,
@@ -85,6 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
+    marginBottom: 50
   },
   buttonText: {
     color: Colors.DEFAULT_WHITE,
@@ -92,3 +99,36 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.POPPINS_SEMI_BOLD,
   }
 })
+
+// ========================================================================================== //
+// Dynamically generate Yup schema based on fields
+// const schema = Yup.object().shape(
+//   fields.reduce((acc, field) => {
+//     let validation = Yup.string()
+//     if (field.type === 'number') {
+//       validation = Yup.number().typeError('Must be a number')
+//     }
+//     if (field.required) {
+//       validation = validation.required(`${field.label} is required`)
+//     }
+//     acc[field.key] = validation
+//     return acc
+//   }, {})
+// )
+
+
+// ========================================================================================== //
+  // const { control, handleSubmit, formState: { errors } } = useForm({
+  //   defaultValues: fields.reduce((acc, field) => {
+  //     acc[field.key] = '';
+  //     return acc
+  //   }, {}),
+  //   resolver: yupResolver(schema)
+  // })
+
+  // const handleFormSubmit = (formData) => {
+  //   setData(prev => [...prev, { id: Date.now(), ...formData }]);
+  //   onSubmit();
+  //   console.log('formData', formData);
+  //   navigation.goBack();
+  // }

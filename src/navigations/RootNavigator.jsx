@@ -26,11 +26,21 @@ const AppDrawer = ({ isLoggedIn, setIsLoggedIn }) => {
             if (isLoggedIn) {
                 try {
                     const data = await fetchSidebarData();
-                    if (data?.sidebar?.sections) {
+                    console.log("Parsed sidebar:", data?.sidebar?.sections);
+
+                    // if (data?.sidebar?.sections) {
+                    //     setSidebarData(data.sidebar.sections);
+                    // }
+
+                    if (data?.sidebar?.sections?.length) {
                         setSidebarData(data.sidebar.sections);
+                    } else {
+                        setSidebarData([]);
                     }
+
                 } catch (error) {
                     console.error('Error fetching sidebar data:', error);
+                     setSidebarData([]);
                 }
             }
             setIsLoading(false);
@@ -94,7 +104,7 @@ const AppDrawer = ({ isLoggedIn, setIsLoggedIn }) => {
                     key={index}
                     name={item.route || item.id}
                     component={item.component}
-                    initialParams={{ 
+                    initialParams={{
                         screenId: item.id,
                         title: item.label,
                         description: item.description
@@ -140,12 +150,15 @@ const RootNavigator = () => {
 
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="App">
-                {() => <AppDrawer isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
-            </Stack.Screen>
-            <Stack.Screen name="Login">
-                {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
-            </Stack.Screen>
+            {isLoggedIn ? (
+                <Stack.Screen name="App">
+                    {() => <AppDrawer isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+                </Stack.Screen>
+            ) : (
+                <Stack.Screen name="Login">
+                    {(props) => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
+                </Stack.Screen>
+            )}
             <Stack.Screen name="Add" component={AddScreen} options={{ headerShown: true }} />
         </Stack.Navigator>
     )

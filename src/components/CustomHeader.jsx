@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, StatusBar } from 'react-native';
 import React from 'react';
 import { Colors, Fonts, Images } from '../constants';
-import { getFromStorage, removeFromStorage } from '../utils/mmkvStorage';
 import Toast from 'react-native-toast-message';
+// import { getFromStorage, removeFromStorage } from '../utils/mmkvStorage';
+import { getFromStorage, removeFromStorage } from '../utils';
 
 const CustomHeader = ({ title, navigation, isLoggedIn, setIsLoggedIn }) => {
 
@@ -30,33 +31,36 @@ const CustomHeader = ({ title, navigation, isLoggedIn, setIsLoggedIn }) => {
     };
 
     return (
-        <View style={styles.headerContainer}>
-            <TouchableOpacity style={{ flex: 0.5 }} onPress={() => navigation.toggleDrawer()} activeOpacity={0.8}>
-                {/* <Menu size={32} color={Colors.DEFAULT_WHITE} /> */}
-                <Image source={Images.HAMBURGER} resizeMode="contain" style={styles.ham} />
-            </TouchableOpacity>
-
-            <Text style={[styles.headerText, { flex: 1.5 }]}>{title}</Text>
-
-            {/* Dynamic button */}
-            {isLoggedIn ? (
-                <TouchableOpacity
-                    style={[styles.loginButton, { flex: 1 }]}
-                    activeOpacity={0.8}
-                    onPress={handleLogout}
-                >
-                    <Text style={styles.loginText}>Logout</Text>
+        <>
+            <View style={styles.headerContainer}>
+                <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_SKY_BLUE} translucent />
+                <TouchableOpacity style={{ flex: 0.5 }} onPress={() => navigation.toggleDrawer()} activeOpacity={0.8}>
+                    {/* <Menu size={32} color={Colors.DEFAULT_WHITE} /> */}
+                    <Image source={Images.HAMBURGER} resizeMode="contain" style={styles.ham} />
                 </TouchableOpacity>
-            ) : (
-                <TouchableOpacity
-                    style={[styles.loginButton, { flex: 1 }]}
-                    activeOpacity={0.8}
-                    onPress={() => navigation.navigate("Login")}
-                >
-                    <Text style={styles.loginText}>Login</Text>
-                </TouchableOpacity>
-            )}
-        </View>
+
+                <Text style={[styles.headerText, { flex: 1.5 }]}>{title}</Text>
+
+                {/* Dynamic button */}
+                {isLoggedIn ? (
+                    <TouchableOpacity
+                        style={[styles.loginButton, { flex: 1 }]}
+                        activeOpacity={0.8}
+                        onPress={handleLogout}
+                    >
+                        <Text style={styles.loginText}>Logout</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={[styles.loginButton, { flex: 1 }]}
+                        activeOpacity={0.8}
+                        onPress={() => navigation.navigate("Login")}
+                    >
+                        <Text style={styles.loginText}>Login</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+        </>
     );
 };
 
@@ -64,12 +68,12 @@ export default CustomHeader;
 
 const styles = StyleSheet.create({
     headerContainer: {
-        height: 120,
+        height: 80,
         backgroundColor: Colors.DEFAULT_SKY_BLUE,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 15,
-        paddingTop: 25
+        paddingTop: 20
     },
     headerText: {
         fontSize: 22,

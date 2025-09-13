@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
-import { Plus, CircleX } from 'lucide-react-native'
+import { Plus, CircleX, Grid, List } from 'lucide-react-native'
+import { CommonGrid, CommonListing } from '../../components';
+
+// product NativeModules, sku, category, price, priceperday
 
 const productFields = [
   {
@@ -26,16 +29,66 @@ const productFields = [
 ];
 
 const ProductsScreen = ({ navigation }) => {
+
   const [searchText, setSearchText] = useState('');
   const [products, setProducts] = useState([]);
+  const [productFormFields, setProductFormFields] = useState([]);
+  const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
+
+  useEffect(() => {
+    setProductFormFields((prev) => {
+      // let exists = productFields.filter(item => item.key != 'price');
+      // console.log('exists', exists);
+      return [...productFields,
+      {
+        key: "quantity",
+        label: "Product Quantity",
+        type: "number",
+        placeholder: "Enter quantity",
+        required: false,
+      }]
+    })
+  }, []);
 
   const addProduct = () => {
     console.log('Products after addition:', products);
   };
 
+  // 👇 parent handlers
+  const handleEdit = (product) => {
+    console.log('Edit product:', product);
+    navigation.navigate('Add', {
+      fields: productFormFields,
+      title: 'Product',
+      setData: setProducts,
+      onSubmit: addProduct,
+      data: product,  // pass existing product
+    });
+  };
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Products</Text>
+
+      {/* Toggle View Button */}
+      <TouchableOpacity
+        style={styles.viewToggleButton}
+        activeOpacity={0.8}
+        onPress={() => setViewType(viewType === 'list' ? 'grid' : 'list')}
+      >
+        {viewType === 'list' ? (
+          <>
+            <Text style={styles.viewTypeText}>Grid</Text>
+            <Grid size={18} color={Colors.DEFAULT_SKY_BLUE} />
+          </>
+        ) : (
+          <>
+            <Text style={styles.viewTypeText}>List</Text>
+            <List size={18} color={Colors.DEFAULT_SKY_BLUE} />
+          </>
+        )}
+      </TouchableOpacity>
 
       <View style={styles.searchContainer}>
         <View style={styles.textInputContainer}>
@@ -57,7 +110,7 @@ const ProductsScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => navigation.navigate('Add', {
-            fields: productFields,
+            fields: productFormFields,
             title: 'Product',
             setData: setProducts,
             onSubmit: addProduct,
@@ -68,21 +121,47 @@ const ProductsScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.listContainer}>
-        {products.length === 0 ? (
-          <Text style={styles.emptyText}>No products yet</Text>
-        ) : (
-          products.map((product) => (
-            <View key={product.id} style={styles.productCard}>
-              <Text style={styles.productName}>{product.name}</Text>
-              <Text style={styles.productPrice}>Price: ${product.price}</Text>
-              {product.description && (
-                <Text style={styles.productDescription}>{product.description}</Text>
-              )}
-            </View>
-          ))
-        )}
-      </ScrollView>
+      {viewType === 'list' ? (
+        <FlatList
+          key={"list"}   // 👈 force re-render
+          data={products}
+          keyExtractor={(item) => item.id.toString()}
+          style={styles.flatListContainer}
+          renderItem={({ item }) => (
+            <CommonListing
+              item={item}
+              fields={productFormFields}
+              navigation={navigation}
+              onEdit={handleEdit}     // 👈 pass parent handlers
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No products yet</Text>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      ) : (
+        <FlatList
+          key={"grid"}   // 👈 different key 
+          data={products}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2} // grid layout
+          style={styles.flatListContainer}
+          renderItem={({ item }) => (
+            <CommonGrid
+              item={item}
+              fields={productFormFields}
+              navigation={navigation}
+              onEdit={handleEdit}     // 👈 pass parent handlers
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No products yet</Text>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
+
     </View>
   )
 }
@@ -107,14 +186,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 20
   },
   textInputContainer: {
     borderWidth: 1.5,
     flexDirection: 'row',
     alignItems: 'center',
     // justifyContent:'space-between'
-    gap: 10,
-    width: '78%',
+    gap: 2,
+    width: '73%',
     borderRadius: 30,
     backgroundColor: Colors.DEFAULT_WHITE,
     borderColor: Colors.DEFAULT_DARK_GRAY,
@@ -122,7 +202,7 @@ const styles = StyleSheet.create({
   textInput: {
     width: '82%',
     // paddingHorizontal: 10,
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: Fonts.POPPINS_MEDIUM,
     marginLeft: 15
   },
@@ -135,8 +215,8 @@ const styles = StyleSheet.create({
     padding: 10
   },
   addButtonText: {
-    fontSize: 18,
-    lineHeight: 18 * 1.4,
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
     fontFamily: Fonts.POPPINS_SEMI_BOLD,
     // paddingVertical: 10,
     // paddingHorizontal:15,
@@ -177,5 +257,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: Fonts.POPPINS_REGULAR,
     color: Colors.DEFAULT_DARK_GRAY,
+  },
+  viewToggleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    gap: 6,
+    top: 8,
+    right: 10,
+    backgroundColor: Colors.DEFAULT_WHITE,
+    borderWidth: 1,
+    borderColor: Colors.DEFAULT_DARK_GRAY,
+    padding: 5,
+    borderRadius: 8,
+  },
+  viewTypeText: {
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    color: Colors.DEFAULT_SKY_BLUE
+  },
+  flatListContainer: {
+    // borderWidth:1,
+    paddingHorizontal: 5,
   }
 })

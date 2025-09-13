@@ -8,7 +8,7 @@ export const fetchSidebarData = async () => {
     try {
         const token = getFromStorage('token'); // Adjust this function to your storage solution
         console.log('Fetched token:', token);
-        
+
         if (!token) {
             throw new Error('No token found');
         }
@@ -25,7 +25,10 @@ export const fetchSidebarData = async () => {
         console.log('Sidebar API Response:', data);
 
         if (data.success) {
-            return data.data;
+            // return data.data;
+
+            // 👇 return whole response, not data.data
+            return data;
         } else {
             throw new Error(data.message);
         }
