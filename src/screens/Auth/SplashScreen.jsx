@@ -1,16 +1,20 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Image, StatusBar, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
 import { Colors, Fonts, Images } from '../../constants'
-import { getFromStorage } from '../../utils/mmkvStorage'
+import { useNavigation } from '@react-navigation/native'
+// import { getFromStorage } from '../../utils/mmkvStorage'
+import { getFromStorage } from '../../utils'
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = () => {
+
+    const navigation = useNavigation();
 
     useEffect(() => {
         const loginUser = getFromStorage('users');
         // Simulate a short delay for the splash screen
         const timer = setTimeout(() => {
             if (loginUser) {
-                navigation.navigate('App', { screen: 'Dashboard' });
+                navigation.navigate('App', { screen: 'dashboard' });
             } else {
                 navigation.navigate('App', { screen: 'Home' });
             }
@@ -21,9 +25,8 @@ const SplashScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.DEFAULT_GREEN} translucent />
+            <StatusBar barStyle="dark-content" backgroundColor={Colors.DEFAULT_LIGHT_BLUE_2} translucent />
             <Image source={Images.logo} resizeMode='contain' style={styles.image} />
-            <Text style={styles.titleText}>FooDelivery</Text>
         </View>
     )
 }
@@ -35,11 +38,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.DEFAULT_GREEN,
+        backgroundColor: Colors.DEFAULT_LIGHT_BLUE_2,
     },
     image: {
-        width: 60,
-        height: 30,
+        width: '100%',
+        height: '100%',
     },
     titleText: {
         color: Colors.DEFAULT_WHITE,

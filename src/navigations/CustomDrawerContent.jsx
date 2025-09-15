@@ -1,8 +1,9 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Colors, Fonts, Images } from '../constants';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { getFromStorage } from '../utils/mmkvStorage';
 
 const CustomDrawerContent = (props) => {
 
@@ -11,6 +12,21 @@ const CustomDrawerContent = (props) => {
     const { drawerList } = props; // 🔑 pass drawerList dynamically
 
     const [expanded, setExpanded] = useState({}); // store expansion states
+    const [loginUserData, setloginUserData] = useState(null);
+
+    const fetchLoginUserData = async () => {
+        try {
+            const userData = await getFromStorage('users');
+            console.log('userData from storage:', userData);
+            setloginUserData(userData);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    }
+
+    useEffect(() => {
+        fetchLoginUserData();
+    }, []);
 
     const toggleExpand = (label) => {
         setExpanded(prev => ({ ...prev, [label]: !prev[label] }));
@@ -23,8 +39,8 @@ const CustomDrawerContent = (props) => {
                 <View style={styles.loginContainer}>
                     <Image source={Images.MAN} resizeMode="contain" style={styles.image} />
                     <View style={styles.loginTextContainer}>
-                        <Text numberOfLines={1} style={styles.loginTextName}>Jhon Doe</Text>
-                        <Text style={styles.loginTextRole}>Admin</Text>
+                        <Text numberOfLines={1} style={styles.loginTextName}>{loginUserData?.userName || 'Jhon Doe'}</Text>
+                        <Text numberOfLines={1} style={styles.loginTextRole}>{loginUserData?.userEmail || 'jhon@gmail.com'}</Text>
                     </View>
                 </View>
 
@@ -34,7 +50,7 @@ const CustomDrawerContent = (props) => {
                         return (
                             <View key={i}>
                                 <TouchableOpacity
-                                    activeOpacity={0.7}
+                                    activeOpacity={0.8}
                                     style={styles.parentItem}
                                     onPress={() => toggleExpand(item.label)}
                                 >
@@ -72,14 +88,30 @@ const CustomDrawerContent = (props) => {
                         <DrawerItem
                             key={i}
                             label={item.label}
-                            onPress={() => props.navigation.navigate(item.route)}
-                            icon={() =>
-                                <item.icon
-                                    size={30}
-                                    color={focusedRoute === item.route ? Colors.DEFAULT_WHITE : Colors.DEFAULT_SKY_BLUE}
-                                />
-                            }
-                            focused={focusedRoute === item.route}
+                            onPress={() => props.navigation.navigate(item.route || item.id)}
+                            icon={(props) => {
+                                if (typeof item.icon === 'string') {
+                                    return (
+                                        <Text style={{
+                                            fontSize: props.size,
+                                            color: props.color,
+                                            width: props.size,
+                                            height: props.size,
+                                            textAlign: 'center',
+                                            textAlignVertical: 'center'
+                                        }}>
+                                            {item.icon}
+                                        </Text>
+                                    );
+                                }
+                                // For component icons (from drawerListBeforeLogin)
+                                if (item.icon) {
+                                    const Icon = item.icon;
+                                    return <Icon size={props.size} color={props.color} />;
+                                }
+                                return null;
+                            }}
+                            focused={focusedRoute === (item.route || item.id)}
                             activeBackgroundColor={Colors.DEFAULT_SKY_BLUE}
                             activeTintColor={Colors.DEFAULT_WHITE}
                             inactiveTintColor={Colors.DEFAULT_SKY_BLUE}
@@ -105,16 +137,18 @@ const styles = StyleSheet.create({
         // marginVertical: 10,
         marginBottom: 10,
         paddingVertical: 10,
+        gap: 5,
         // borderWidth: 1,
     },
     loginTextContainer: {
         flexDirection: 'column',
         alignItems: 'flex-start',
-        // borderWidth:1
+        // borderWidth:1,
+        flex: 1,
     },
     loginTextName: {
-        fontSize: 24,
-        lineHeight: 24 * 1.4,
+        fontSize: 18,
+        lineHeight: 18 * 1.4,
         // textAlign: 'center',
         fontFamily: Fonts.POPPINS_BOLD,
         color: Colors.DEFAULT_SKY_BLUE,
@@ -122,16 +156,16 @@ const styles = StyleSheet.create({
         // marginBottom: 10
     },
     loginTextRole: {
-        fontSize: 18,
-        lineHeight: 18 * 1.4,
+        fontSize: 14,
+        lineHeight: 14 * 1.4,
         fontFamily: Fonts.POPPINS_SEMI_BOLD,
         color: Colors.DEFAULT_DARK_RED,
     },
     image: {
         // width: Display.setWidth(20),
         // height: Display.setHeight(7),
-        width: 100,
-        height: 80,
+        width: 60,
+        height: 50,
     },
     parentItem: {
         flexDirection: 'row',

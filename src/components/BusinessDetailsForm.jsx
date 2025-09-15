@@ -1,7 +1,6 @@
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { Colors, Fonts } from '../constants'
-import { useForm } from 'react-hook-form';
 
 const BusinessDetailsForm = ({ onContinue, renderInput }) => {
 

@@ -107,3 +107,19 @@ npx react-native start --reset-cache
 
 
 npm install --save-dev metro-react-native-babel-preset
+
+
+dark mode off syntax
+=======================================================================
+android - > android/app/src/main/res/values/styles.xml open pannunga 
+===========
+ <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+      <!-- Dark mode force disable -->
+        <item name="android:forceDarkAllowed">false</item>
+=======================================================================
+
+ios -> ios/YourApp/Info.plist open pannunga
+===========
+ <key>UIUserInterfaceStyle</key>
+    <string>Light</string>
+=======================================================================

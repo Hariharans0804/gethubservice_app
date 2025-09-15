@@ -1,11 +1,47 @@
 
 // Use baseURL from environment variable
 import { API_HOST } from '@env';
+import { getFromStorage } from '../utils/mmkvStorage';
+
+
+export const fetchSidebarData = async () => {
+    try {
+        const token = getFromStorage('token'); // Adjust this function to your storage solution
+        console.log('Fetched token:', token);
+
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await fetch(`${API_HOST}/sidebar/sidebar-sections`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        console.log('Sidebar API Response:', data);
+
+        if (data.success) {
+            // return data.data;
+
+            // 👇 return whole response, not data.data
+            return data;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Sidebar API Error:', error);
+        throw error;
+    }
+};
 
 
 export const fetchCategoriesAPI = async () => {
     try {
-        const response = await fetch(`${API_HOST}/api/business-types/categories`, {
+        const response = await fetch(`${API_HOST}/business-types/categories`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

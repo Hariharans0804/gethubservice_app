@@ -282,8 +282,9 @@ const CreateSiteScreen = ({ navigation }) => {
 
                   // 🔑 Sync logic here
                   if (name === 'businessName') {
-                    setValue('websiteAddress', text);
-                    setValue('userName', text);
+                    const formatted = text.toLowerCase().replace(/\s+/g, '');
+                    setValue('websiteAddress', formatted);
+                    setValue('userName', formatted);
                   }
                 }}
                 multiline={multiline}
