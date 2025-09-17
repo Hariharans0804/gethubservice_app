@@ -10,14 +10,30 @@ const CommonListing = ({ item, fields, navigation, onEdit }) => {
 
             {/* Render all fields dynamically */}
             <View style={{ flex: 1, marginLeft: 10 }}>
-                {fields.map((field) => (
-                    item[field.key] ? (
+                {fields.map((field) => {
+                    let value = item[field.key];
+
+                    // special handling for parent field
+                    if (field.key === "parent") {
+                        if (value && typeof value === "object") {
+                            value = value.name || value._id;
+                        } else if (!value) {
+                            value = "—"; // 👈 safe fallback if null/undefined
+                        }
+                    }
+
+                    // fallback: convert objects to string safely
+                    if (typeof value === "object") {
+                        value = JSON.stringify(value);
+                    }
+
+                    return value ? (
                         <Text key={field.key} style={styles.fieldText}>
                             {/* <Text style={{ fontWeight: "600" }}>{field.label}: </Text> */}
-                            {item[field.key]}
+                            {value}
                         </Text>
-                    ) : null
-                ))}
+                    ) : null;
+                })}
             </View>
 
             {/* Action buttons */}
@@ -74,11 +90,14 @@ const styles = StyleSheet.create({
     },
 })
 
-//    <View style={{ flex: 1, marginLeft: 10 }}>
-//         <Text style={styles.customerName}>{item.name}</Text>
-//         <Text style={styles.customerEmail}>{item.email}</Text>
-//         <Text style={styles.customerPhone}>{item.phone}</Text>
-//         {item.address ? (
-//             <Text style={styles.customerAddress}>{item.address}</Text>
-//         ) : null}
-//     </View>
+
+            {/* Render all fields dynamically */}
+            {/* <View style={{ flex: 1, marginLeft: 10 }}>
+                {fields.map((field) => (
+                    item[field.key] ? (
+                        <Text key={field.key} style={styles.fieldText}>
+                            {item[field.key]}
+                        </Text>
+                    ) : null
+                ))}
+            </View> */}

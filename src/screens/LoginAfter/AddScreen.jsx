@@ -14,6 +14,12 @@ const AddScreen = ({ route, navigation }) => {
   const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: fields.reduce((acc, field) => {
       let value = data ? data[field.key] ?? '' : '';
+
+      // Special case: parent should be the _id, not object
+      if (field.key === 'parent' && value && typeof value === 'object') {
+        value = value._id;
+      }
+
       // 👇 ensure numbers are converted to string for TextInput
       acc[field.key] = typeof value === 'number' ? value.toString() : value;
       return acc;
@@ -21,26 +27,17 @@ const AddScreen = ({ route, navigation }) => {
     resolver: yupResolver(schema)
   });
 
-  const handleFormSubmit = (formData) => {
-    if (data) {
-      // 👇 update existing
-      setData(prev =>
-        prev.map(p => p.id === data.id ? { ...p, ...formData } : p)
-      );
-    } else {
-      // 👇 create new
-      setData(prev => [...prev, { id: Date.now(), ...formData }]);
-    }
 
-    onSubmit();
+  const handleFormSubmit = (formData) => {
+    const finalData = data?._id ? { ...formData, _id: data._id } : formData;
+    onSubmit(finalData);
     navigation.goBack();
   };
-
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>
-        {data ? `Edit ${title}` : `Create ${title}`}
+        {data?._id ? `Edit ${title}` : `Create ${title}`}
       </Text>
 
       {fields.map((field) => (
@@ -62,7 +59,7 @@ const AddScreen = ({ route, navigation }) => {
         onPress={handleSubmit(handleFormSubmit)}
       >
         <Text style={styles.buttonText}>
-          {data ? `Update ${title}` : `Add ${title}`}
+          {data?._id ? `Update ${title}` : `Add ${title}`}
         </Text>
       </TouchableOpacity>
     </ScrollView>
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.DEFAULT_WHITE,
-    padding: 20,
+    padding:20,
     // borderWidth:1,
     // borderColor:'red'
   },
@@ -100,6 +97,24 @@ const styles = StyleSheet.create({
   }
 })
 
+
+  // const handleFormSubmit = (formData) => {
+
+  //   if (data) {
+  //     // 👇 update existing
+  //     setData(prev =>
+  //       prev.map(p => (p._id === data._id ? { ...p, ...formData } : p))
+  //     );
+  //   } else {
+  //     // 👇 create new
+  //     setData(prev => [...prev, { ...formData }]); // no fake id, backend provides _id
+  //   }
+
+  //   onSubmit(formData, data);
+  //   navigation.goBack();
+  // };
+  
+
 // ========================================================================================== //
 // Dynamically generate Yup schema based on fields
 // const schema = Yup.object().shape(
@@ -118,17 +133,17 @@ const styles = StyleSheet.create({
 
 
 // ========================================================================================== //
-  // const { control, handleSubmit, formState: { errors } } = useForm({
-  //   defaultValues: fields.reduce((acc, field) => {
-  //     acc[field.key] = '';
-  //     return acc
-  //   }, {}),
-  //   resolver: yupResolver(schema)
-  // })
+// const { control, handleSubmit, formState: { errors } } = useForm({
+//   defaultValues: fields.reduce((acc, field) => {
+//     acc[field.key] = '';
+//     return acc
+//   }, {}),
+//   resolver: yupResolver(schema)
+// })
 
-  // const handleFormSubmit = (formData) => {
-  //   setData(prev => [...prev, { id: Date.now(), ...formData }]);
-  //   onSubmit();
-  //   console.log('formData', formData);
-  //   navigation.goBack();
-  // }
+// const handleFormSubmit = (formData) => {
+//   setData(prev => [...prev, { id: Date.now(), ...formData }]);
+//   onSubmit();
+//   console.log('formData', formData);
+//   navigation.goBack();
+// }

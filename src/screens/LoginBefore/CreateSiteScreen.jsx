@@ -6,7 +6,7 @@ import * as Yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Dropdown } from 'react-native-element-dropdown'
 import { CircleX, Eye, EyeOff, Fish, LifeBuoy, Sailboat, ShieldCheck, Ship } from 'lucide-react-native'
-import { fetchCategoriesAPI } from '../../api/getApi'
+import { fetchBusinessTypeCategoriesAPI } from '../../api/getApi'
 import { siteCreationAPI } from '../../api/postApi';
 import { AccountSetupForm, BusinessDetailsForm, ThemeColorsForm } from '../../components'
 import { Country, State, City } from "country-state-city";
@@ -76,7 +76,7 @@ const CreateSiteScreen = ({ navigation }) => {
 
 
   const fetchBusinessType = async () => {
-    const result = await fetchCategoriesAPI();
+    const result = await fetchBusinessTypeCategoriesAPI();
     // console.log('result', result);
     if (result.success) {
       setBusinessType(result.data);

@@ -176,6 +176,7 @@ export default FormInputs
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    
   },
   label: {
     fontSize: 16,

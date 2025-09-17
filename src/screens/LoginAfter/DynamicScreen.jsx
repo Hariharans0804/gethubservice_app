@@ -6,6 +6,7 @@ import CustomerScreen from './CustomerScreen';
 import EmployeesScreen from './EmployeesScreen';
 import ServicesScreen from './ServicesScreen';
 import AppointmentsScreen from './AppointmentsScreen';
+import CategoriesScreen from './CategoriesScreen';
 
 const DynamicScreen = ({ route, navigation }) => {
 
@@ -40,8 +41,12 @@ const DynamicScreen = ({ route, navigation }) => {
                 <AppointmentsScreen screenId={screenId} navigation={navigation} />
             )}
             
-            {screenId === 'analytics' && (
+            {screenId === 'products' && (
                 <ProductsScreen screenId={screenId} navigation={navigation} />
+            )}
+
+            {screenId === 'categories' && (
+                <CategoriesScreen screenId={screenId} navigation={navigation} />
             )}
 
 
