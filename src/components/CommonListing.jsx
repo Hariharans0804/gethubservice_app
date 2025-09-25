@@ -3,7 +3,9 @@ import React from 'react'
 import { Colors, Fonts, Images } from '../constants'
 import { Edit, Eye, Trash2 } from 'lucide-react-native'
 
-const CommonListing = ({ item, fields, navigation, onEdit }) => {
+const CommonListing = ({ item, fields, navigation, onEdit, onDelete, setData }) => {
+
+
     return (
         <View style={styles.customerCard}>
             <Image source={Images.PROFILE1} resizeMode='contain' style={styles.image} />
@@ -27,12 +29,23 @@ const CommonListing = ({ item, fields, navigation, onEdit }) => {
                         value = JSON.stringify(value);
                     }
 
-                    return value ? (
+                    if (!value) return null;
+
+                    // ✅ Only show label for sku & pricePerDay
+                    const showLabel = field.key === "sku" || field.key === "pricePerDay";
+
+                    return (
                         <Text key={field.key} style={styles.fieldText}>
-                            {/* <Text style={{ fontWeight: "600" }}>{field.label}: </Text> */}
-                            {value}
+                            {showLabel ? (
+                                <>
+                                    <Text>{field.label} : </Text>
+                                    {value}
+                                </>
+                            ) : (
+                                value
+                            )}
                         </Text>
-                    ) : null;
+                    );
                 })}
             </View>
 
@@ -42,11 +55,15 @@ const CommonListing = ({ item, fields, navigation, onEdit }) => {
                     <Eye size={18} color={Colors.PRIMARY} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.iconButton} onPress={() => onEdit(item)}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => {
+                    // console.log('setData', setData());
+                    // setData(item);
+                    onEdit(item);
+                }}>
                     <Edit size={18} color={Colors.SECONDARY} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => onDelete(item)}>
                     <Trash2 size={18} color={Colors.ERROR} />
                 </TouchableOpacity>
             </View>
@@ -69,7 +86,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     image: {
-        width: 40,
+        width: 30,
         height: 40,
     },
     customerName: { fontSize: 16, fontWeight: "600" },
@@ -91,8 +108,8 @@ const styles = StyleSheet.create({
 })
 
 
-            {/* Render all fields dynamically */}
-            {/* <View style={{ flex: 1, marginLeft: 10 }}>
+{/* Render all fields dynamically */ }
+{/* <View style={{ flex: 1, marginLeft: 10 }}>
                 {fields.map((field) => (
                     item[field.key] ? (
                         <Text key={field.key} style={styles.fieldText}>

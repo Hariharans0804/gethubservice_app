@@ -3,6 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants'
 import { Plus, CircleX, Grid, List } from 'lucide-react-native'
 import { CommonGrid, CommonListing } from '../../components';
+import { fetchCategoriesAPI, fetchProductsAPI } from '../../api/getApi';
+import { createProductAPI } from '../../api/postApi';
+import Toast from 'react-native-toast-message';
+import { editProductAPI } from '../../api/putApi';
+import { deleteProductAPI } from '../../api/deleteApi';
 
 // product NativeModules, sku, category, price, priceperday
 
@@ -13,56 +18,173 @@ const productFields = [
     type: "text",
     placeholder: "Enter product name",
     required: true,
-  }, {
-    key: "price",
-    label: "Product Price",
-    type: "number",
-    placeholder: "Enter product price",
+  },
+  {
+    key: "sku",
+    label: "SKU",
+    type: "text",
+    placeholder: "Enter SKU",
     required: true,
-  }, {
-    key: "description",
-    label: "Product Description",
-    type: "textarea",
-    placeholder: "Enter product description",
+  },
+  {
+    key: "pricePerDay",   // 👈 backend expectation
+    label: "Price",
+    type: "number",
+    placeholder: "$ 0.00",
+    required: true,
+  },
+  {
+    key: "category",
+    label: "Choose Category",
+    type: "treeDropdown",
+    options: [], // This can be populated with existing categories
+    placeholder: "Select category",
     required: false,
-  }
+  },
 ];
+
+// remove category field
+const listingFields = productFields.filter(f => f.key !== "category");
+
+const buildCategoryTree = (categories) => {
+  const map = {};
+  const roots = [];
+
+  // Step 1: create map
+  categories.forEach((cat) => {
+    map[cat._id] = { ...cat, children: [] };
+  });
+
+  // Step 2: assign children to parents
+  categories.forEach((cat) => {
+    if (cat.parent && cat.parent._id) {
+      if (map[cat.parent._id]) {
+        map[cat.parent._id].children.push(map[cat._id]);
+      }
+    } else {
+      roots.push(map[cat._id]); // root if no parent
+    }
+  });
+
+  return roots;
+};
+
 
 const ProductsScreen = ({ navigation }) => {
 
   const [searchText, setSearchText] = useState('');
-  const [products, setProducts] = useState([]);
-  const [productFormFields, setProductFormFields] = useState([]);
+  const [categories, setCategories] = useState([]);   // 👈 list
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);   // 👈 list
+  const [product, setProduct] = useState({});     // 👈 single item
   const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
 
+
+
+
   useEffect(() => {
-    setProductFormFields((prev) => {
-      // let exists = productFields.filter(item => item.key != 'price');
-      // console.log('exists', exists);
-      return [...productFields,
-      {
-        key: "quantity",
-        label: "Product Quantity",
-        type: "number",
-        placeholder: "Enter quantity",
-        required: false,
-      }]
-    })
+    fetchCategories();
+    fetchProducts();
   }, []);
 
-  const addProduct = () => {
-    console.log('Products after addition:', products);
+
+  const handleDelete = async (item) => {
+    try {
+      await deleteProductAPI(item._id);
+      Toast.show({ type: "success", text1: "Product deleted successfully!" });
+      fetchProducts();  // refresh list
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Delete failed!",
+        text2: error.message || "Please try again.",
+      });
+    }
+  }
+
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const result = await fetchProductsAPI();
+      // console.log('productList', result.data);
+      setProducts(result.data);
+
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const result = await fetchCategoriesAPI();
+      // console.log('categoryList', result.data);
+
+      // Build tree
+      const treeOptions = buildCategoryTree(result.data);
+      setCategories(treeOptions);
+
+      // Assign to productFields
+      productFields.forEach((field) => {
+        if (field.key === "category") {
+          field.options = treeOptions;
+        }
+      });
+
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+
+
+  const handleProductSubmit = async (productData) => {
+    try {
+      if (productData?._id) {
+        await editProductAPI(productData._id, productData);
+        Toast.show({ type: "success", text1: "Category updated successfully!" });
+      } else {
+        await createProductAPI(productData);
+        Toast.show({ type: "success", text1: "Category created successfully!" });
+      }
+
+      setProduct({});      // reset form state
+      fetchProducts();     // refresh list
+    } catch (error) {
+      console.error("Failed to save category:", error);
+      Toast.show({
+        type: "error",
+        text1: "Product save failed!",
+        text2: "Please try again.",
+      });
+    }
+  };
+
+
+
+
+  const handleAdd = () => {
+    setProduct({});
+    navigation.navigate("Add", {
+      fields: productFields,
+      title: 'Product',
+      data: {},
+      onSubmit: handleProductSubmit,
+    })
+  }
 
   // 👇 parent handlers
   const handleEdit = (product) => {
-    console.log('Edit product:', product);
     navigation.navigate('Add', {
-      fields: productFormFields,
+      fields: productFields,
       title: 'Product',
-      setData: setProducts,
-      onSubmit: addProduct,
       data: product,  // pass existing product
+      onSubmit: handleProductSubmit,
     });
   };
 
@@ -109,12 +231,7 @@ const ProductsScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('Add', {
-            fields: productFormFields,
-            title: 'Product',
-            setData: setProducts,
-            onSubmit: addProduct,
-          })}
+          onPress={handleAdd}
         >
           <Plus size={20} color={Colors.DEFAULT_WHITE} />
           <Text style={styles.addButtonText}>Add</Text>
@@ -125,14 +242,15 @@ const ProductsScreen = ({ navigation }) => {
         <FlatList
           key={"list"}   // 👈 force re-render
           data={products}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => (item._id || item.id || index).toString()}
           style={styles.flatListContainer}
           renderItem={({ item }) => (
             <CommonListing
               item={item}
-              fields={productFormFields}
+              fields={listingFields}
               navigation={navigation}
               onEdit={handleEdit}     // 👈 pass parent handlers
+              onDelete={handleDelete}
             />
           )}
           ListEmptyComponent={
@@ -144,15 +262,16 @@ const ProductsScreen = ({ navigation }) => {
         <FlatList
           key={"grid"}   // 👈 different key 
           data={products}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => (item._id || item.id || index).toString()}
           numColumns={2} // grid layout
           style={styles.flatListContainer}
           renderItem={({ item }) => (
             <CommonGrid
               item={item}
-              fields={productFormFields}
+              fields={listingFields}
               navigation={navigation}
               onEdit={handleEdit}     // 👈 pass parent handlers
+              onDelete={handleDelete}
             />
           )}
           ListEmptyComponent={
@@ -282,3 +401,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   }
 })
+
+
+
+// const [productFormFields, setProductFormFields] = useState([]);
+
+// useEffect(() => {
+//   setProductFormFields((prev) => {
+//     // let exists = productFields.filter(item => item.key != 'price');
+//     // console.log('exists', exists);
+//     return [...productFields,
+//     {
+//       key: "quantity",
+//       label: "Product Quantity",
+//       type: "number",
+//       placeholder: "Enter quantity",
+//       required: false,
+//     }]
+//   })
+// }, []);

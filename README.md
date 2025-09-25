@@ -123,3 +123,99 @@ ios -> ios/YourApp/Info.plist open pannunga
  <key>UIUserInterfaceStyle</key>
     <string>Light</string>
 =======================================================================
+
+
+└── 📁src
+    ├── 📁app                 # App-level core setup
+    │   ├── App.js
+    │   ├── index.js
+    │   ├── navigation.js     # Root navigation config
+    │   ├── store.js          # Redux/Zustand setup
+    │   └── theme.js          # Global theme (colors, spacing, typography)
+    │
+    ├── 📁assets              # Static resources (global)
+    │   ├── fonts/
+    │   ├── images/
+    │   ├── svgs/
+    │   └── lottie/
+    │
+    ├── 📁components          # Shared reusable UI components
+    │   ├── common/           # Buttons, Inputs, Modals, Loaders
+    │   ├── forms/            # Form components
+    │   ├── layout/           # Headers, NavBars, Sidebars
+    │   └── index.js
+    │
+    ├── 📁constants           # Global constants
+    │   ├── colors.js
+    │   ├── fonts.js
+    │   ├── images.js
+    │   ├── strings.js
+    │   └── index.js
+    │
+    ├── 📁features            # 💡 Feature-based structure (modular)
+    │   ├── 📁auth
+    │   │   ├── api/          # login, register APIs
+    │   │   ├── components/   # Auth-specific UI
+    │   │   ├── hooks/        # useAuth, useLogin
+    │   │   ├── screens/      # LoginScreen, RegisterScreen, ForgotPassword
+    │   │   ├── store/        # authSlice.js or Zustand store
+    │   │   └── index.js
+    │   │
+    │   ├── 📁products
+    │   │   ├── api/          # productApi.js
+    │   │   ├── components/   # ProductCard, ProductForm
+    │   │   ├── hooks/        # useProducts, useProductForm
+    │   │   ├── screens/      # ProductsScreen, AddProductScreen, EditProductScreen
+    │   │   ├── store/        # productSlice.js
+    │   │   └── index.js
+    │   │
+    │   ├── 📁categories
+    │   │   ├── api/          # categoryApi.js
+    │   │   ├── components/   # CategoryForm, CategoryTree
+    │   │   ├── screens/      # CategoriesScreen, AddCategoryScreen
+    │   │   ├── store/        # categorySlice.js
+    │   │   └── index.js
+    │   │
+    │   ├── 📁orders
+    │   │   ├── api/          # orderApi.js
+    │   │   ├── components/   # OrderCard, OrderStatusBadge
+    │   │   ├── screens/      # OrdersScreen, OrderDetailScreen
+    │   │   ├── store/        # orderSlice.js
+    │   │   └── index.js
+    │   │
+    │   ├── 📁customers
+    │   │   ├── api/          # customerApi.js
+    │   │   ├── components/   # CustomerCard, CustomerForm
+    │   │   ├── screens/      # CustomersScreen, CustomerDetailScreen
+    │   │   ├── store/        # customerSlice.js
+    │   │   └── index.js
+    │   │
+    │   └── 📁settings
+    │       ├── api/
+    │       ├── components/
+    │       ├── screens/      # ProfileScreen, SettingsScreen
+    │       └── store/
+    │
+    ├── 📁hooks               # Global reusable hooks (non-feature-specific)
+    │   ├── useTheme.js
+    │   ├── useDebounce.js
+    │   └── useNetworkStatus.js
+    │
+    ├── 📁navigations         # Navigation containers & stacks
+    │   ├── RootNavigator.jsx
+    │   ├── AuthNavigator.jsx
+    │   ├── AppNavigator.jsx
+    │   └── DrawerNavigator.jsx
+    │
+    ├── 📁services            # External integrations (Firebase, Sentry, Payments)
+    │   ├── firebase.js
+    │   ├── analytics.js
+    │   └── paymentGateway.js
+    │
+    ├── 📁utils               # Helpers & utilities
+    │   ├── formatters.js     # formatDate, formatCurrency
+    │   ├── validators.js     # emailValidator, passwordValidator
+    │   ├── storage.js        # mmkvStorage wrapper
+    │   └── index.js
+    │
+    └── 📁types               # (optional) Typescript type definitions / interfaces

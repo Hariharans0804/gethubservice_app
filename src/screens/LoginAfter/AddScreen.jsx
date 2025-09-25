@@ -11,7 +11,7 @@ const AddScreen = ({ route, navigation }) => {
 
   const schema = buildSchema(fields);
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm({
     defaultValues: fields.reduce((acc, field) => {
       let value = data ? data[field.key] ?? '' : '';
 
@@ -51,6 +51,9 @@ const AddScreen = ({ route, navigation }) => {
           errors={errors}
           type={field.type}          // 👈 Pass type
           options={field.options}    // 👈 Pass options for dropdown
+            // 👇 extra props
+  setValue={setValue}
+  watchName={field.key}
         />
       ))}
 

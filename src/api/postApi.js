@@ -3,35 +3,19 @@
 import { API_HOST } from '@env';
 import { getFromStorage } from '../utils';
 
-const cleanCategoryPayload = (data) => {
-    let payload = { ...data };
+const token = getFromStorage('token');
+console.log('Fetched token post:', token);
 
-    // handle parent
-    if (!payload.parent || payload.parent === "") {
-        payload.parent = null;
-    } else if (typeof payload.parent === "object" && payload.parent._id) {
-        // In case parent comes as object from API, extract its id
-        payload.parent = payload.parent._id;
-    }
-
-    return payload;
-};
-
-export const editCategoriesAPI = async (id, categoryData) => {
+export const createProductAPI = async (productData) => {
     try {
-        const token = getFromStorage('token'); // Adjust this function to your storage solution
-        console.log('Fetched token:', token);
-
         if (!token) {
             throw new Error('No token found');
         }
 
-        // ✅ no need to remap type anymore
-        // const payload = { ...categoryData };
-        const payload = cleanCategoryPayload(categoryData);  // ✅ sanitize here
+        const payload = { ...productData };
 
-        const response = await fetch(`${API_HOST}/categories/${id}`, {
-            method: 'PUT',
+        const response = await fetch(`${API_HOST}/products`, {
+            method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -46,11 +30,10 @@ export const editCategoriesAPI = async (id, categoryData) => {
         }
 
         const data = await response.json();
-        console.log('Create Category API response:', data);
+        console.log('Create Product API response:', data);
 
         // 👇 Return only the category object
         return data.data;
-
 
     } catch (error) {
         console.error('Create Category API error:', error);
@@ -58,11 +41,23 @@ export const editCategoriesAPI = async (id, categoryData) => {
     }
 }
 
+// ===========================================================================//
+const cleanCategoryPayload = (data) => {
+    let payload = { ...data };
+
+    // handle parent
+    if (!payload.parent || payload.parent === "") {
+        payload.parent = null;
+    } else if (typeof payload.parent === "object" && payload.parent._id) {
+        // In case parent comes as object from API, extract its id
+        payload.parent = payload.parent._id;
+    }
+
+    return payload;
+};
+
 export const createCategoriesAPI = async (categoryData) => {
     try {
-        const token = getFromStorage('token'); // Adjust this function to your storage solution
-        console.log('Fetched token:', token);
-
         if (!token) {
             throw new Error('No token found');
         }
@@ -100,6 +95,7 @@ export const createCategoriesAPI = async (categoryData) => {
         throw error;
     }
 }
+// ===========================================================================//
 
 export const loginAPI = async (loginData) => {
     try {

@@ -3,7 +3,10 @@ import React from 'react'
 import { Colors, Images } from '../constants'
 import { Edit, Eye, Trash2 } from 'lucide-react-native'
 
-const CommonGrid = ({ item, fields, navigation, onEdit }) => {
+const CommonGrid = ({ item, fields, navigation, onEdit, onDelete, setData }) => {
+
+
+
     return (
         <View style={styles.gridCard}>
             <Image source={Images.PROFILE1} resizeMode='contain' style={styles.image} />
@@ -43,10 +46,14 @@ const CommonGrid = ({ item, fields, navigation, onEdit }) => {
                 >
                     <Eye size={18} color={Colors.PRIMARY} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconButton} onPress={() => onEdit(item)}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => {
+                    // console.log('setData', setData());
+                    // setData(item);
+                    onEdit(item);
+                }}>
                     <Edit size={18} color={Colors.SECONDARY} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => onDelete(item)}>
                     <Trash2 size={18} color={Colors.ERROR} />
                 </TouchableOpacity>
             </View>

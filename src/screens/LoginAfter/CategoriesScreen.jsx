@@ -1,11 +1,13 @@
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../constants';
 import { CircleX, Cone, Grid, List, Plus } from 'lucide-react-native';
-import { CommonGrid, CommonListing } from '../../components';
-import { createCategoriesAPI, editCategoriesAPI } from '../../api/postApi';
+import { CategoriesListing, CommonGrid, CommonListing } from '../../components';
 import Toast from 'react-native-toast-message';
 import { fetchCategoriesAPI } from '../../api/getApi';
+import { createCategoriesAPI } from '../../api/postApi';
+import { editCategoriesAPI } from '../../api/putApi';
+import { deleteCategoriesAPI } from '../../api/deleteApi';
 
 const categoriesFields = [
     {
@@ -15,18 +17,18 @@ const categoriesFields = [
         placeholder: "Enter category name",
         required: true,
     },
-    {
-        key: "type",
-        label: "Category Type",
-        type: "dropdown",
-        options: [
-            { label: "Product", value: "product" },
-            { label: "Service", value: "service" },
-            { label: "Both", value: "both" },
-        ],
-        placeholder: "Select category type",
-        required: true,
-    },
+    // {
+    //     key: "type",
+    //     label: "Category Type",
+    //     type: "dropdown",
+    //     options: [
+    //         { label: "Product", value: "product" },
+    //         { label: "Service", value: "service" },
+    //         { label: "Both", value: "both" },
+    //     ],
+    //     placeholder: "Select category type",
+    //     required: true,
+    // },
     {
         key: "description",
         label: "Category Description",
@@ -44,87 +46,90 @@ const categoriesFields = [
     {
         key: "parent",
         label: "Parent Category",
-        type: "dropdown",
+        type: "treeDropdown",
         options: [], // This can be populated with existing categories
         placeholder: "Select parent category",
         required: false,
     }
 ];
 
+
+const buildCategoryTree = (categories) => {
+    const map = {};
+    const roots = [];
+
+    // Step 1: create map
+    categories.forEach((cat) => {
+        map[cat._id] = { ...cat, children: [] };
+    });
+
+    // Step 2: assign children to parents
+    categories.forEach((cat) => {
+        if (cat.parent && cat.parent._id) {
+            if (map[cat.parent._id]) {
+                map[cat.parent._id].children.push(map[cat._id]);
+            }
+        } else {
+            roots.push(map[cat._id]); // root if no parent
+        }
+    });
+
+    return roots;
+};
+
+
 const CategoriesScreen = ({ navigation }) => {
 
     const [searchText, setSearchText] = useState('');
+    const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);   // 👈 list
     const [category, setCategory] = useState({});       // 👈 single item
-    const [categoryFormFields, setCategoryFormFields] = useState([]);
-    const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
+
+
+    const handleDelete = async (item) => {
+        try {
+            await deleteCategoriesAPI(item._id);
+            Toast.show({ type: "success", text1: "Category deleted successfully!" });
+            fetchCategories(); // refresh list
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Delete failed!",
+                text2: error.message || "Please try again.",
+            });
+        }
+    };
+
 
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
-    // const fetchCategories = async () => {
-    //     try {
-    //         const result = await fetchCategoriesAPI();
-    //         if (result.success) {
-    //             setCategories(result.data);
 
-    //             // update parent dropdown dynamically
-    //             setCategoryFormFields([
-    //                 ...categoriesFields.map((field) =>
-    //                     field.key === "parent"
-    //                         ? {
-    //                             ...field,
-    //                             options: result.data
-    //                                 .filter((c) => c._id !== category?._id)   // 👈 exclude self
-    //                                 .map((c) => ({
-    //                                     label: c.name,
-    //                                     value: c._id,
-    //                                 })),
-    //                         }
-    //                         : field
-    //                 ),
-    //             ]);
-    //         }
-    //     } catch (err) {
-    //         console.error("Failed to fetch categories:", err);
-    //     }
-    // };
+
 
 
     const fetchCategories = async () => {
         try {
+            setLoading(true);
             const result = await fetchCategoriesAPI();
             if (result.success) {
-                setCategories(result.data);
+                const tree = buildCategoryTree(result.data);
+                setCategories(tree);
             }
         } catch (err) {
             console.error("Failed to fetch categories:", err);
+        } finally {
+            setLoading(false);
         }
     };
+
 
     // 👇 whenever categories OR category changes, rebuild parent dropdown
     useEffect(() => {
         if (categories.length > 0) {
-            let updatededCategoryFiels =[...categoriesFields]
-           
 
-            setCategoryFormFields(
-                 updatededCategoryFiels.map((field) =>
-                    field.key === "parent"
-                        ? {
-                            ...field,
-                            options: categories
-                                .filter((c) => c._id !== category?._id) // exclude self if editing
-                                .map((c) => ({
-                                    label: c.name,
-                                    value: c._id,
-                                })),
-                        }
-                        : field
-                )
-            );
         }
     }, [categories, category]);
 
@@ -162,10 +167,23 @@ const CategoriesScreen = ({ navigation }) => {
         }
     };
 
+
+
+    const handleGetParentCategory = (item = null) => {
+        const tree = categories.filter((c) => c._id !== item?._id); // exclude self
+
+        return categoriesFields.map((field) =>
+            field.key === "parent"
+                ? { ...field, type: "treeDropdown", options: tree } // 👈 full tree pass
+                : field
+        );
+    };
+
+
     const handleAdd = () => {
         setCategory({});
         navigation.navigate("Add", {
-            fields: categoryFormFields,
+            fields: handleGetParentCategory(),
             title: "Category",
             data: {}, // empty object
             onSubmit: handleCategorySubmit,
@@ -173,40 +191,20 @@ const CategoriesScreen = ({ navigation }) => {
     };
 
     const handleEdit = (item) => {
-        setCategory(item);
         navigation.navigate("Add", {
-            fields: categoryFormFields,
+            fields: handleGetParentCategory(item),
             title: "Category",
             data: item, // single category object
             onSubmit: handleCategorySubmit,
         });
     };
 
-    console.log('category - 01', category);
-    // console.log('categories - ', categories);
 
     return (
         <View style={styles.container}>
             <Text style={styles.heading}>Categories</Text>
 
-            {/* Toggle View Button */}
-            <TouchableOpacity
-                style={styles.viewToggleButton}
-                activeOpacity={0.8}
-                onPress={() => setViewType(viewType === 'list' ? 'grid' : 'list')}
-            >
-                {viewType === 'list' ? (
-                    <>
-                        <Text style={styles.viewTypeText}>Grid</Text>
-                        <Grid size={18} color={Colors.DEFAULT_SKY_BLUE} />
-                    </>
-                ) : (
-                    <>
-                        <Text style={styles.viewTypeText}>List</Text>
-                        <List size={18} color={Colors.DEFAULT_SKY_BLUE} />
-                    </>
-                )}
-            </TouchableOpacity>
+
 
             <View style={styles.searchContainer}>
                 <View style={styles.textInputContainer}>
@@ -235,47 +233,27 @@ const CategoriesScreen = ({ navigation }) => {
             </View>
 
 
-            {viewType === 'list' ? (
-                <FlatList
-                    key={"list"}   // 👈 force re-render
-                    data={categories}
-                    keyExtractor={(item, index) => (item._id || item.id || index).toString()}
-                    style={styles.flatListContainer}
-                    renderItem={({ item }) => (
-                        <CommonListing
-                            item={item}
-                            fields={categoryFormFields}   // 👈 pass fields
-                            navigation={navigation}
-                            onEdit={handleEdit}     // 👈 pass parent handlers
-                        />
-                    )}
-                    ListEmptyComponent={
-                        <Text style={styles.emptyText}>No employees yet</Text>
-                    }
-                    contentContainerStyle={{ paddingBottom: 20 }}
-                />
-            ) : (
-                <FlatList
-                    key={"grid"}   //   👈 different key 
-                    data={categories}
-                    keyExtractor={(item, index) => (item._id || item.id || index).toString()}
-                    numColumns={2}
-                    style={styles.flatListContainer}
-                    renderItem={({ item }) => (
-                        <CommonGrid
-                            item={item}
-                            fields={categoryFormFields}   // 👈 pass field 
-                            navigation={navigation}
-                            onEdit={handleEdit}     // 👈 pass parent handlers
-                        />
-                    )}
-                    ListEmptyComponent={
-                        <Text style={styles.emptyText}>No customers yet</Text>
-                    }
-                    contentContainerStyle={{ paddingBottom: 20 }}
-                />
-            )}
 
+            <FlatList
+                key={"list"}   // 👈 force re-render
+                data={categories}
+                keyExtractor={(item, index) => (item._id || item.id || index).toString()}
+                style={styles.flatListContainer}
+                renderItem={({ item }) => (
+                    <CategoriesListing
+                        item={item}
+                        fields={categoriesFields}   // 👈 pass fields
+                        navigation={navigation}
+                        setData={setCategory}
+                        onEdit={handleEdit}     // 👈 pass parent handlers
+                        onDelete={handleDelete}     // 👈 pass parent handlers
+                    />
+                )}
+                ListEmptyComponent={
+                    <Text style={styles.emptyText}>No categories yet</Text>
+                }
+                contentContainerStyle={{ paddingBottom: 20 }}
+            />
 
         </View>
     )
@@ -370,6 +348,35 @@ const styles = StyleSheet.create({
 })
 
 
+// const fetchCategories = async () => {
+//     try {
+//         const result = await fetchCategoriesAPI();
+//         if (result.success) {
+//             setCategories(result.data);
+
+//             // update parent dropdown dynamically
+//             setCategoryFormFields([
+//                 ...categoriesFields.map((field) =>
+//                     field.key === "parent"
+//                         ? {
+//                             ...field,
+//                             options: result.data
+//                                 .filter((c) => c._id !== category?._id)   // 👈 exclude self
+//                                 .map((c) => ({
+//                                     label: c.name,
+//                                     value: c._id,
+//                                 })),
+//                         }
+//                         : field
+//                 ),
+//             ]);
+//         }
+//     } catch (err) {
+//         console.error("Failed to fetch categories:", err);
+//     }
+// };
+
+
 
 // const fetchCategories = async () => {
 //     const result = await fetchCategoriesAPI();
@@ -400,6 +407,10 @@ const styles = StyleSheet.create({
 //     console.log('Render');
 
 // }, []);
+
+
+
+
 
 
 // const fetchCategories = async () => {
