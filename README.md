@@ -124,47 +124,46 @@ ios -> ios/YourApp/Info.plist open pannunga
     <string>Light</string>
 =======================================================================
 
-
 └── 📁src
-    ├── 📁app                 # App-level core setup
+    ├── 📁app                 # App-level setup
     │   ├── App.js
     │   ├── index.js
-    │   ├── navigation.js     # Root navigation config
+    │   ├── navigation.js     # Root navigation setup
     │   ├── store.js          # Redux/Zustand setup
     │   └── theme.js          # Global theme (colors, spacing, typography)
     │
-    ├── 📁assets              # Static resources (global)
+    ├── 📁assets              # Static resources
     │   ├── fonts/
     │   ├── images/
     │   ├── svgs/
     │   └── lottie/
     │
-    ├── 📁components          # Shared reusable UI components
-    │   ├── common/           # Buttons, Inputs, Modals, Loaders
-    │   ├── forms/            # Form components
-    │   ├── layout/           # Headers, NavBars, Sidebars
+    ├── 📁components          # Shared reusable UI
+    │   ├── common/           # Buttons, Inputs, Loaders, Modals
+    │   ├── forms/            # Form elements (TextInput, Dropdown, DatePicker)
+    │   ├── layout/           # Layout components (Header, Sidebar, Drawer)
     │   └── index.js
     │
-    ├── 📁constants           # Global constants
+    ├── 📁constants           # Global constants/config
     │   ├── colors.js
     │   ├── fonts.js
     │   ├── images.js
     │   ├── strings.js
     │   └── index.js
     │
-    ├── 📁features            # 💡 Feature-based structure (modular)
+    ├── 📁features            # 💡 Feature-based structure
     │   ├── 📁auth
-    │   │   ├── api/          # login, register APIs
+    │   │   ├── api/          # login, register, logout
     │   │   ├── components/   # Auth-specific UI
     │   │   ├── hooks/        # useAuth, useLogin
-    │   │   ├── screens/      # LoginScreen, RegisterScreen, ForgotPassword
-    │   │   ├── store/        # authSlice.js or Zustand store
+    │   │   ├── screens/      # LoginScreen, RegisterScreen, SplashScreen, OnboardScreen
+    │   │   ├── store/        # authSlice.js
     │   │   └── index.js
     │   │
     │   ├── 📁products
     │   │   ├── api/          # productApi.js
     │   │   ├── components/   # ProductCard, ProductForm
-    │   │   ├── hooks/        # useProducts, useProductForm
+    │   │   ├── hooks/        # useProducts
     │   │   ├── screens/      # ProductsScreen, AddProductScreen, EditProductScreen
     │   │   ├── store/        # productSlice.js
     │   │   └── index.js
@@ -172,6 +171,7 @@ ios -> ios/YourApp/Info.plist open pannunga
     │   ├── 📁categories
     │   │   ├── api/          # categoryApi.js
     │   │   ├── components/   # CategoryForm, CategoryTree
+    │   │   ├── hooks/        # useCategories
     │   │   ├── screens/      # CategoriesScreen, AddCategoryScreen
     │   │   ├── store/        # categorySlice.js
     │   │   └── index.js
@@ -179,6 +179,7 @@ ios -> ios/YourApp/Info.plist open pannunga
     │   ├── 📁orders
     │   │   ├── api/          # orderApi.js
     │   │   ├── components/   # OrderCard, OrderStatusBadge
+    │   │   ├── hooks/        # useOrders
     │   │   ├── screens/      # OrdersScreen, OrderDetailScreen
     │   │   ├── store/        # orderSlice.js
     │   │   └── index.js
@@ -190,32 +191,57 @@ ios -> ios/YourApp/Info.plist open pannunga
     │   │   ├── store/        # customerSlice.js
     │   │   └── index.js
     │   │
-    │   └── 📁settings
-    │       ├── api/
-    │       ├── components/
-    │       ├── screens/      # ProfileScreen, SettingsScreen
-    │       └── store/
+    │   ├── 📁services
+    │   │   ├── api/          # servicesApi.js
+    │   │   ├── components/   # ServiceCard, ServiceForm
+    │   │   ├── screens/      # ServicesScreen, AddServiceScreen
+    │   │   ├── store/        # serviceSlice.js
+    │   │   └── index.js
+    │   │
+    │   ├── 📁appointments
+    │   │   ├── api/          # appointmentApi.js
+    │   │   ├── components/   # AppointmentCard
+    │   │   ├── screens/      # AppointmentsScreen, AppointmentDetailScreen
+    │   │   ├── store/        # appointmentSlice.js
+    │   │   └── index.js
+    │   │
+    │   ├── 📁staff
+    │   │   ├── api/          # staffApi.js
+    │   │   ├── components/   # EmployeeCard, EmployeeForm
+    │   │   ├── screens/      # EmployeesScreen, AddEmployeeScreen
+    │   │   ├── store/        # staffSlice.js
+    │   │   └── index.js
+    │   │
+    │   └── 📁core            # Cross-feature/global screens & logic
+    │       ├── screens/
+    │       │   ├── DashboardScreen.jsx
+    │       │   ├── DynamicScreen.jsx   # ✅ put your DynamicScreen here
+    │       │   └── ReportsScreen.jsx
+    │       ├── components/   # Core widgets (charts, analytics cards)
+    │       └── index.js
     │
-    ├── 📁hooks               # Global reusable hooks (non-feature-specific)
+    ├── 📁hooks               # Global reusable hooks
     │   ├── useTheme.js
     │   ├── useDebounce.js
-    │   └── useNetworkStatus.js
+    │   ├── useNetworkStatus.js
+    │   └── index.js
     │
-    ├── 📁navigations         # Navigation containers & stacks
+    ├── 📁navigations         # Navigation setup
     │   ├── RootNavigator.jsx
     │   ├── AuthNavigator.jsx
     │   ├── AppNavigator.jsx
-    │   └── DrawerNavigator.jsx
+    │   ├── DrawerNavigator.jsx
+    │   └── TabNavigator.jsx
     │
-    ├── 📁services            # External integrations (Firebase, Sentry, Payments)
+    ├── 📁services            # External integrations
     │   ├── firebase.js
     │   ├── analytics.js
     │   └── paymentGateway.js
     │
-    ├── 📁utils               # Helpers & utilities
+    ├── 📁utils               # Global utilities
     │   ├── formatters.js     # formatDate, formatCurrency
     │   ├── validators.js     # emailValidator, passwordValidator
     │   ├── storage.js        # mmkvStorage wrapper
     │   └── index.js
     │
-    └── 📁types               # (optional) Typescript type definitions / interfaces
+    └── 📁types               # (optional, if using TypeScript)

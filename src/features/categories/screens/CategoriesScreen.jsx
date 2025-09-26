@@ -1,13 +1,10 @@
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Colors, Fonts } from '../../constants';
+import { Colors, Fonts } from '../../../constants';
 import { CircleX, Cone, Grid, List, Plus } from 'lucide-react-native';
-import { CategoriesListing, CommonGrid, CommonListing } from '../../components';
+import { CategoriesListing, CommonGrid, CommonListing } from '../../../components';
 import Toast from 'react-native-toast-message';
-import { fetchCategoriesAPI } from '../../api/getApi';
-import { createCategoriesAPI } from '../../api/postApi';
-import { editCategoriesAPI } from '../../api/putApi';
-import { deleteCategoriesAPI } from '../../api/deleteApi';
+import { createCategoryAPI, deleteCategoryAPI, editCategoryAPI, fetchCategoriesAPI } from '../api/categoryApi';
 
 const categoriesFields = [
     {
@@ -88,7 +85,7 @@ const CategoriesScreen = ({ navigation }) => {
 
     const handleDelete = async (item) => {
         try {
-            await deleteCategoriesAPI(item._id);
+            await deleteCategoryAPI(item._id);
             Toast.show({ type: "success", text1: "Category deleted successfully!" });
             fetchCategories(); // refresh list
         } catch (error) {
@@ -114,8 +111,11 @@ const CategoriesScreen = ({ navigation }) => {
         try {
             setLoading(true);
             const result = await fetchCategoriesAPI();
+                 console.log('result',result);
             if (result.success) {
-                const tree = buildCategoryTree(result.data);
+                const tree = buildCategoryTree(result.data.data);
+                console.log('tree',tree);
+                
                 setCategories(tree);
             }
         } catch (err) {
@@ -148,10 +148,10 @@ const CategoriesScreen = ({ navigation }) => {
 
 
             if (formData?._id) {
-                await editCategoriesAPI(formData._id, formData);
+                await editCategoryAPI(formData._id, formData);
                 Toast.show({ type: "success", text1: "Category updated successfully!" });
             } else {
-                await createCategoriesAPI(formData);
+                await createCategoryAPI(formData);
                 Toast.show({ type: "success", text1: "Category created successfully!" });
             }
 
