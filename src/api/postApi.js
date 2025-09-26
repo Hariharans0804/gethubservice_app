@@ -1,5 +1,101 @@
 
+// Use baseURL from environment variable
 import { API_HOST } from '@env';
+import { getFromStorage } from '../utils';
+
+const token = getFromStorage('token');
+console.log('Fetched token post:', token);
+
+export const createProductAPI = async (productData) => {
+    try {
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const payload = { ...productData };
+
+        const response = await fetch(`${API_HOST}/products`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Backend error response:", errorData); // 👈 log server details
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Create Product API response:', data);
+
+        // 👇 Return only the category object
+        return data.data;
+
+    } catch (error) {
+        console.error('Create Category API error:', error);
+        throw error;
+    }
+}
+
+// ===========================================================================//
+const cleanCategoryPayload = (data) => {
+    let payload = { ...data };
+
+    // handle parent
+    if (!payload.parent || payload.parent === "") {
+        payload.parent = null;
+    } else if (typeof payload.parent === "object" && payload.parent._id) {
+        // In case parent comes as object from API, extract its id
+        payload.parent = payload.parent._id;
+    }
+
+    return payload;
+};
+
+export const createCategoriesAPI = async (categoryData) => {
+    try {
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        // ✅ no need to remap type anymore
+        // const payload = { ...categoryData };
+        const payload = cleanCategoryPayload(categoryData);  // ✅ sanitize here
+
+        //   console.log('API_HOST',API_HOST);
+
+        const response = await fetch(`${API_HOST}/categories`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Backend error response:", errorData); // 👈 log server details
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Create Category API response:', data);
+
+        // 👇 Return only the category object
+        return data.data;
+
+
+    } catch (error) {
+        console.error('Create Category API error:', error);
+        throw error;
+    }
+}
+// ===========================================================================//
 
 export const loginAPI = async (loginData) => {
     try {
@@ -61,14 +157,14 @@ export const siteCreationAPI = async (siteData) => {
 
         // Validate required fields
         const requiredFields = [
-            'businessName', 
-            'businessType', 
-            'subdomain', 
-            'contactEmail', 
-            'userPassword', 
+            'businessName',
+            'businessType',
+            'subdomain',
+            'contactEmail',
+            'userPassword',
             'contactPhone'
         ];
-        
+
         const missingFields = requiredFields.filter(field => !transformedData[field]);
 
         if (missingFields.length > 0) {

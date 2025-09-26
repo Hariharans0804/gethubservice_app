@@ -1,0 +1,479 @@
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Colors, Fonts } from '../../constants';
+import { CircleX, Cone, Grid, List, Plus } from 'lucide-react-native';
+import { CategoriesListing, CommonGrid, CommonListing } from '../../components';
+import Toast from 'react-native-toast-message';
+import { fetchCategoriesAPI } from '../../api/getApi';
+import { createCategoriesAPI } from '../../api/postApi';
+import { editCategoriesAPI } from '../../api/putApi';
+import { deleteCategoriesAPI } from '../../api/deleteApi';
+
+const categoriesFields = [
+    {
+        key: "name",
+        label: "Category Name",
+        type: "text",
+        placeholder: "Enter category name",
+        required: true,
+    },
+    // {
+    //     key: "type",
+    //     label: "Category Type",
+    //     type: "dropdown",
+    //     options: [
+    //         { label: "Product", value: "product" },
+    //         { label: "Service", value: "service" },
+    //         { label: "Both", value: "both" },
+    //     ],
+    //     placeholder: "Select category type",
+    //     required: true,
+    // },
+    {
+        key: "description",
+        label: "Category Description",
+        type: "textarea",
+        placeholder: "Enter category description",
+        required: false,
+    },
+    {
+        key: "icon",
+        label: "Category Icon",
+        type: "text",
+        placeholder: "e.g., any emoji",
+        required: false,
+    },
+    {
+        key: "parent",
+        label: "Parent Category",
+        type: "treeDropdown",
+        options: [], // This can be populated with existing categories
+        placeholder: "Select parent category",
+        required: false,
+    }
+];
+
+
+const buildCategoryTree = (categories) => {
+    const map = {};
+    const roots = [];
+
+    // Step 1: create map
+    categories.forEach((cat) => {
+        map[cat._id] = { ...cat, children: [] };
+    });
+
+    // Step 2: assign children to parents
+    categories.forEach((cat) => {
+        if (cat.parent && cat.parent._id) {
+            if (map[cat.parent._id]) {
+                map[cat.parent._id].children.push(map[cat._id]);
+            }
+        } else {
+            roots.push(map[cat._id]); // root if no parent
+        }
+    });
+
+    return roots;
+};
+
+
+const CategoriesScreen = ({ navigation }) => {
+
+    const [searchText, setSearchText] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState([]);   // 👈 list
+    const [category, setCategory] = useState({});       // 👈 single item
+
+
+    const handleDelete = async (item) => {
+        try {
+            await deleteCategoriesAPI(item._id);
+            Toast.show({ type: "success", text1: "Category deleted successfully!" });
+            fetchCategories(); // refresh list
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Delete failed!",
+                text2: error.message || "Please try again.",
+            });
+        }
+    };
+
+
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+
+
+
+
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            const result = await fetchCategoriesAPI();
+            if (result.success) {
+                const tree = buildCategoryTree(result.data);
+                setCategories(tree);
+            }
+        } catch (err) {
+            console.error("Failed to fetch categories:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // 👇 whenever categories OR category changes, rebuild parent dropdown
+    useEffect(() => {
+        if (categories.length > 0) {
+
+        }
+    }, [categories, category]);
+
+    const handleCategorySubmit = async (formData) => {
+        try {
+
+            // prevent category being its own parent
+            if (formData._id && formData.parent === formData._id) {
+                Toast.show({
+                    type: "error",
+                    text1: "Invalid Parent",
+                    text2: "Category cannot be its own parent",
+                });
+                return; // stop submit
+            }
+
+
+            if (formData?._id) {
+                await editCategoriesAPI(formData._id, formData);
+                Toast.show({ type: "success", text1: "Category updated successfully!" });
+            } else {
+                await createCategoriesAPI(formData);
+                Toast.show({ type: "success", text1: "Category created successfully!" });
+            }
+
+            setCategory({});      // reset form state
+            fetchCategories();    // refresh list
+        } catch (error) {
+            console.error("Failed to save category:", error);
+            Toast.show({
+                type: "error",
+                text1: "Category save failed!",
+                text2: "Please try again.",
+            });
+        }
+    };
+
+
+
+    const handleGetParentCategory = (item = null) => {
+        const tree = categories.filter((c) => c._id !== item?._id); // exclude self
+
+        return categoriesFields.map((field) =>
+            field.key === "parent"
+                ? { ...field, type: "treeDropdown", options: tree } // 👈 full tree pass
+                : field
+        );
+    };
+
+
+    const handleAdd = () => {
+        setCategory({});
+        navigation.navigate("Add", {
+            fields: handleGetParentCategory(),
+            title: "Category",
+            data: {}, // empty object
+            onSubmit: handleCategorySubmit,
+        });
+    };
+
+    const handleEdit = (item) => {
+        navigation.navigate("Add", {
+            fields: handleGetParentCategory(item),
+            title: "Category",
+            data: item, // single category object
+            onSubmit: handleCategorySubmit,
+        });
+    };
+
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.heading}>Categories</Text>
+
+
+
+            <View style={styles.searchContainer}>
+                <View style={styles.textInputContainer}>
+                    <TextInput
+                        placeholder='Search'
+                        placeholderTextColor={Colors.DEFAULT_DARK_GRAY}
+                        selectionColor={Colors.DEFAULT_DARK_GRAY}
+                        style={styles.textInput}
+                        value={searchText}
+                        onChangeText={setSearchText}
+                    />
+                    {searchText && (
+                        <TouchableOpacity onPress={() => setSearchText('')} activeOpacity={0.8}>
+                            <CircleX size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleAdd}
+                >
+                    <Plus size={20} color={Colors.DEFAULT_WHITE} />
+                    <Text style={styles.addButtonText}>Add</Text>
+                </TouchableOpacity>
+            </View>
+
+
+
+            <FlatList
+                key={"list"}   // 👈 force re-render
+                data={categories}
+                keyExtractor={(item, index) => (item._id || item.id || index).toString()}
+                style={styles.flatListContainer}
+                renderItem={({ item }) => (
+                    <CategoriesListing
+                        item={item}
+                        fields={categoriesFields}   // 👈 pass fields
+                        navigation={navigation}
+                        setData={setCategory}
+                        onEdit={handleEdit}     // 👈 pass parent handlers
+                        onDelete={handleDelete}     // 👈 pass parent handlers
+                    />
+                )}
+                ListEmptyComponent={
+                    <Text style={styles.emptyText}>No categories yet</Text>
+                }
+                contentContainerStyle={{ paddingBottom: 20 }}
+            />
+
+        </View>
+    )
+}
+
+export default CategoriesScreen
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.DEFAULT_WHITE
+    },
+    heading: {
+        fontSize: 22,
+        // lineHeight: 22 * 1.4,
+        fontFamily: Fonts.POPPINS_SEMI_BOLD,
+        padding: 10,
+        color: Colors.DEFAULT_SKY_BLUE
+    },
+    searchContainer: {
+        // borderWidth: 1,
+        marginHorizontal: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20
+    },
+    textInputContainer: {
+        borderWidth: 1.5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent:'space-between'
+        gap: 2,
+        width: '73%',
+        borderRadius: 30,
+        backgroundColor: Colors.DEFAULT_WHITE,
+        borderColor: Colors.DEFAULT_DARK_GRAY,
+    },
+    textInput: {
+        width: '82%',
+        // paddingHorizontal: 10,
+        fontSize: 16,
+        fontFamily: Fonts.POPPINS_MEDIUM,
+        marginLeft: 15
+    },
+    addButton: {
+        backgroundColor: Colors.DEFAULT_SKY_BLUE,
+        borderRadius: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'space-around',
+        padding: 10
+    },
+    addButtonText: {
+        fontSize: 16,
+        lineHeight: 16 * 1.4,
+        fontFamily: Fonts.POPPINS_SEMI_BOLD,
+        // paddingVertical: 10,
+        // paddingHorizontal:15,
+        color: Colors.DEFAULT_WHITE
+    },
+    emptyText: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontFamily: Fonts.POPPINS_MEDIUM,
+        color: Colors.DEFAULT_DARK_GRAY
+    },
+
+    viewToggleButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        position: 'absolute',
+        gap: 6,
+        top: 8,
+        right: 10,
+        backgroundColor: Colors.DEFAULT_WHITE,
+        borderWidth: 1,
+        borderColor: Colors.DEFAULT_DARK_GRAY,
+        padding: 5,
+        borderRadius: 8,
+    },
+    viewTypeText: {
+        fontSize: 16,
+        lineHeight: 16 * 1.4,
+        fontFamily: Fonts.POPPINS_MEDIUM,
+        color: Colors.DEFAULT_SKY_BLUE
+    },
+    flatListContainer: {
+        // borderWidth:1,
+        paddingHorizontal: 5,
+    }
+})
+
+
+// const fetchCategories = async () => {
+//     try {
+//         const result = await fetchCategoriesAPI();
+//         if (result.success) {
+//             setCategories(result.data);
+
+//             // update parent dropdown dynamically
+//             setCategoryFormFields([
+//                 ...categoriesFields.map((field) =>
+//                     field.key === "parent"
+//                         ? {
+//                             ...field,
+//                             options: result.data
+//                                 .filter((c) => c._id !== category?._id)   // 👈 exclude self
+//                                 .map((c) => ({
+//                                     label: c.name,
+//                                     value: c._id,
+//                                 })),
+//                         }
+//                         : field
+//                 ),
+//             ]);
+//         }
+//     } catch (err) {
+//         console.error("Failed to fetch categories:", err);
+//     }
+// };
+
+
+
+// const fetchCategories = async () => {
+//     const result = await fetchCategoriesAPI();
+//     console.log('result', result);
+//     if (result.success) {
+//         setCategories(result.data);
+//     } else {
+//         console.error('Failed to fetch categories:', result.error);
+//     }
+// };
+
+
+// useEffect(() => {
+//     setCategoryFormFields((prev) => {
+//         // let exists = customerFields.filter(item => item.key != 'email');
+//         // console.log('exists', exists);
+//         return [...categoriesFields,
+//         {
+//             key: "additionalInfo",
+//             label: "Additional Info",
+//             type: "textarea",
+//             placeholder: "Enter any additional info",
+//             required: false,
+//         }]
+//     });
+
+//     fetchCategories();
+//     console.log('Render');
+
+// }, []);
+
+
+
+
+
+
+// const fetchCategories = async () => {
+//     const result = await fetchCategoriesAPI();
+//     if (result.success) {
+//         // populate parent dropdown with categories
+//         setCategoryFormFields([
+//             ...categoriesFields.map(field =>
+//                 field.key === "parent"
+//                     ? { ...field, options: result.data.map(c => ({ label: c.name, value: c._id })) }
+//                     : field
+//             ),
+//             {
+//                 key: "additionalInfo",
+//                 label: "Additional Info",
+//                 type: "textarea",
+//                 placeholder: "Enter any additional info",
+//                 required: false,
+//             }
+//         ]);
+//         setCategories(result.data);
+//     } else {
+//         console.error('Failed to fetch categories:', result.error);
+//     }
+// };
+
+// const addCategory = async (formData, existing) => {
+//     try {
+//         if (existing) {
+//             await editCategoriesAPI(existing._id, formData);
+//             Toast.show({ type: 'success', text1: 'Category updated successfully!' });
+//         } else {
+//             await createCategoriesAPI(formData);
+//             Toast.show({ type: 'success', text1: 'Category created successfully!' });
+//         }
+//         fetchCategories();
+//     } catch (error) {
+//         console.error("Failed to save category:", error);
+//         Toast.show({
+//             type: 'error',
+//             text1: 'Category save failed!',
+//             text2: 'Please try again.',
+//         });
+//     }
+// };
+
+
+// const handleAdd = () => {
+//     navigation.navigate('Add', {
+//         fields: categoryFormFields,
+//         title: 'Category',
+//         setData: setCategories,
+//         onSubmit: addCategory,
+//     });
+// };
+
+// const handleEdit = (category) => {
+//     navigation.navigate('Add', {
+//         fields: categoryFormFields,
+//         title: 'Category',
+//         setData: setCategories,
+//         onSubmit: addCategory,
+//         data: category,  // existing for edit
+//     });
+// };
+

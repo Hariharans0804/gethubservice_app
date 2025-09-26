@@ -50,15 +50,17 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
       // navigation.replace('App'); // replace stack so user can't go back
 
       // OPTIONAL: store token/user for later using mmkv storage
-      const { user, token } = data;
-      const userName = user?.name;
-      const userEmail = user?.email;
-      const userRole = user.role;
+      const { token } = data;
+      // const userName = user?.name;
+      // const userEmail = user?.email;
+      // const userRole = user.role;
 
-      saveToStorage('users', { userName, userEmail, userRole });
+      // console.log('user', user);
+
+      // saveToStorage('users', { userName, userEmail, userRole });
       saveToStorage('token', token);
       // Check storage works
-      console.log('Stored User:', getFromStorage('users'));
+      // console.log('Stored User:', getFromStorage('users'));
       console.log('Stored Token:', getFromStorage('token'));
 
       Alert.alert('Success', 'Logged in successfully.');
@@ -212,7 +214,7 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // backgroundColor: Colors.DEFAULT_LIGHT_BLUE_2,
     // paddingHorizontal: 20,
-    paddingTop:40
+    paddingTop: 40
   },
   logoContainer: {
     width: '100%',

@@ -3,21 +3,50 @@ import React from 'react'
 import { Colors, Fonts, Images } from '../constants'
 import { Edit, Eye, Trash2 } from 'lucide-react-native'
 
-const CommonListing = ({ item, fields, navigation, onEdit }) => {
+const CommonListing = ({ item, fields, navigation, onEdit, onDelete, setData }) => {
+
+
     return (
         <View style={styles.customerCard}>
             <Image source={Images.PROFILE1} resizeMode='contain' style={styles.image} />
 
             {/* Render all fields dynamically */}
             <View style={{ flex: 1, marginLeft: 10 }}>
-                {fields.map((field) => (
-                    item[field.key] ? (
+                {fields.map((field) => {
+                    let value = item[field.key];
+
+                    // special handling for parent field
+                    if (field.key === "parent") {
+                        if (value && typeof value === "object") {
+                            value = value.name || value._id;
+                        } else if (!value) {
+                            value = "—"; // 👈 safe fallback if null/undefined
+                        }
+                    }
+
+                    // fallback: convert objects to string safely
+                    if (typeof value === "object") {
+                        value = JSON.stringify(value);
+                    }
+
+                    if (!value) return null;
+
+                    // ✅ Only show label for sku & pricePerDay
+                    const showLabel = field.key === "sku" || field.key === "pricePerDay";
+
+                    return (
                         <Text key={field.key} style={styles.fieldText}>
-                            {/* <Text style={{ fontWeight: "600" }}>{field.label}: </Text> */}
-                            {item[field.key]}
+                            {showLabel ? (
+                                <>
+                                    <Text>{field.label} : </Text>
+                                    {value}
+                                </>
+                            ) : (
+                                value
+                            )}
                         </Text>
-                    ) : null
-                ))}
+                    );
+                })}
             </View>
 
             {/* Action buttons */}
@@ -26,11 +55,15 @@ const CommonListing = ({ item, fields, navigation, onEdit }) => {
                     <Eye size={18} color={Colors.PRIMARY} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.iconButton} onPress={() => onEdit(item)}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => {
+                    // console.log('setData', setData());
+                    // setData(item);
+                    onEdit(item);
+                }}>
                     <Edit size={18} color={Colors.SECONDARY} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.iconButton}>
+                <TouchableOpacity style={styles.iconButton} onPress={() => onDelete(item)}>
                     <Trash2 size={18} color={Colors.ERROR} />
                 </TouchableOpacity>
             </View>
@@ -53,7 +86,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     image: {
-        width: 40,
+        width: 30,
         height: 40,
     },
     customerName: { fontSize: 16, fontWeight: "600" },
@@ -74,11 +107,14 @@ const styles = StyleSheet.create({
     },
 })
 
-//    <View style={{ flex: 1, marginLeft: 10 }}>
-//         <Text style={styles.customerName}>{item.name}</Text>
-//         <Text style={styles.customerEmail}>{item.email}</Text>
-//         <Text style={styles.customerPhone}>{item.phone}</Text>
-//         {item.address ? (
-//             <Text style={styles.customerAddress}>{item.address}</Text>
-//         ) : null}
-//     </View>
+
+{/* Render all fields dynamically */ }
+{/* <View style={{ flex: 1, marginLeft: 10 }}>
+                {fields.map((field) => (
+                    item[field.key] ? (
+                        <Text key={field.key} style={styles.fieldText}>
+                            {item[field.key]}
+                        </Text>
+                    ) : null
+                ))}
+            </View> */}

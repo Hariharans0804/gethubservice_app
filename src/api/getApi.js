@@ -1,14 +1,66 @@
 
 // Use baseURL from environment variable
 import { API_HOST } from '@env';
-import { getFromStorage } from '../utils/mmkvStorage';
+import { getFromStorage } from '../utils';
 
+const token = getFromStorage('token'); // Adjust this function to your storage solution
+console.log('Fetched token:', token);
+
+export const fetchProductsAPI = async () => {
+    try {
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await fetch(`${API_HOST}/products`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Fetch Categories API response:', data);
+        return { success: true, data: data};
+
+    } catch (error) {
+        console.error('Fetch Categories API error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+export const fetchCategoriesAPI = async () => {
+    try {
+        if (!token) {
+            throw new Error('No token found');
+        }
+
+        const response = await fetch(`${API_HOST}/categories`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Fetch Categories API response:', data);
+        return { success: true, data: data.data };
+
+    } catch (error) {
+        console.error('Fetch Categories API error:', error);
+        return { success: false, error: error.message };
+    }
+};
 
 export const fetchSidebarData = async () => {
     try {
-        const token = getFromStorage('token'); // Adjust this function to your storage solution
-        console.log('Fetched token:', token);
-
         if (!token) {
             throw new Error('No token found');
         }
@@ -38,8 +90,7 @@ export const fetchSidebarData = async () => {
     }
 };
 
-
-export const fetchCategoriesAPI = async () => {
+export const fetchBusinessTypeCategoriesAPI = async () => {
     try {
         const response = await fetch(`${API_HOST}/business-types/categories`, {
             method: 'GET',

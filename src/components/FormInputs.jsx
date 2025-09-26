@@ -5,6 +5,7 @@ import { Controller } from 'react-hook-form'
 import { Dropdown } from 'react-native-element-dropdown'
 import { Calendar } from 'react-native-calendars'
 import { CalendarHeart, ShieldCheck } from 'lucide-react-native'
+import TreeDropdown from './TreeDropdown'
 
 const FormInputs = ({
   control,
@@ -16,7 +17,9 @@ const FormInputs = ({
   multiline,
   errors,
   type,
-  options = [] // dropdown options
+  options = [], // dropdown options
+  setValue,
+  watchName,
 }) => {
 
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
@@ -32,6 +35,46 @@ const FormInputs = ({
         rules={rules}
         render={({ field: { value, onChange, onBlur } }) => {
           // console.log(`FormInputs (${name}) field render with value:`, value); // logs on each keystroke
+
+          // 👇 auto SKU logic
+          if (watchName === "name") {
+            return (
+              <TextInput
+                value={value}
+                onChangeText={(text) => {
+                  onChange(text);
+                  // auto fill SKU
+                  const sku = text.toLowerCase().replace(/\s+/g, "");
+                  setValue("sku", sku, { shouldValidate: true });
+                }}
+                placeholder={placeholder}
+                style={[styles.input, errors[name] && styles.errorInput]}
+              />
+            );
+          }
+
+          if (name === "sku") {
+            return (
+              <TextInput
+                value={value}
+                editable={false}   // 👈 read-only
+                placeholder={placeholder}
+                style={[styles.input, ]}
+              />
+            );
+          }
+
+          if (type === "treeDropdown") {
+            return (
+              <TreeDropdown
+                data={options} // 👈 already tree வடிவில் pass பண்ணும்
+                placeholder={placeholder}   // 👈 pass placeholder
+                value={value}               // 👈 current selected value
+                onSelect={(selected) => onChange(selected._id)}
+              />
+            );
+          }
+
 
           if (type === 'dropdown') {
             // For simplicity, using TextInput to simulate dropdown behavior
@@ -176,6 +219,7 @@ export default FormInputs
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+
   },
   label: {
     fontSize: 16,

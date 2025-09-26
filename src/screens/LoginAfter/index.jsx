@@ -1,6 +1,7 @@
 import AddScreen from "./AddScreen";
 import AppointmentsScreen from "./AppointmentsScreen";
 import BusinessesScreen from "./BusinessesScreen";
+import CategoriesScreen from "./CategoriesScreen";
 import CustomerScreen from "./CustomerScreen";
 import DashboardScreen from "./DashboardScreen";
 import EmployeesScreen from "./EmployeesScreen";
@@ -26,4 +27,5 @@ export {
     GeneralScreen,
     EmployeesScreen,
     AppointmentsScreen,
+    CategoriesScreen
 };
