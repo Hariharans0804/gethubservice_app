@@ -5,12 +5,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { Colors } from '../constants';
 import CustomDrawerContent from './CustomDrawerContent';
 import { drawerListAfterLogin, drawerListBeforeLogin } from '../data/drawerList';
-import { LoginScreen, SplashScreen } from '../screens/Auth';
 import { CustomHeader } from '../components';
 import { getFromStorage } from '../utils/mmkvStorage';
 import { AddScreen } from '../screens/LoginAfter';
-import DynamicScreen from '../screens/LoginAfter/DynamicScreen';
+// import { LoginScreen, SplashScreen } from '../screens/Auth';
+// import DynamicScreen from '../screens/LoginAfter/DynamicScreen';
 import { fetchSidebarData } from '../api/getApi';
+import { LoginScreen, SplashScreen } from '../features/auth';
+import { DynamicScreen } from '../features/core';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();

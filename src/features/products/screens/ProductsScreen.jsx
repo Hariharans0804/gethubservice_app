@@ -1,13 +1,10 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Colors, Fonts } from '../../constants'
+import { Colors, Fonts } from '../../../constants'
 import { Plus, CircleX, Grid, List } from 'lucide-react-native'
-import { CommonGrid, CommonListing } from '../../components';
-import { fetchCategoriesAPI, fetchProductsAPI } from '../../api/getApi';
-import { createProductAPI } from '../../api/postApi';
+import { CommonGrid, CommonListing } from '../../../components';
 import Toast from 'react-native-toast-message';
-import { editProductAPI } from '../../api/putApi';
-import { deleteProductAPI } from '../../api/deleteApi';
+import { createProductAPI, deleteProductAPI, editProductAPI, fetchCategoriesAPI, fetchProductsAPI } from '../api/productApi';
 
 // product NativeModules, sku, category, price, priceperday
 
@@ -124,7 +121,7 @@ const ProductsScreen = ({ navigation }) => {
       // console.log('categoryList', result.data);
 
       // Build tree
-      const treeOptions = buildCategoryTree(result.data);
+      const treeOptions = buildCategoryTree(result.data.data);
       setCategories(treeOptions);
 
       // Assign to productFields

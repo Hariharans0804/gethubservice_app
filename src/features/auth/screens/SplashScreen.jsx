@@ -1,9 +1,8 @@
 import { Image, StatusBar, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
-import { Colors, Fonts, Images } from '../../constants'
+import { Colors, Fonts, Images } from '../../../constants'
 import { useNavigation } from '@react-navigation/native'
-// import { getFromStorage } from '../../utils/mmkvStorage'
-import { getFromStorage } from '../../utils'
+import { getFromStorage } from '../../../utils'
 
 const SplashScreen = () => {
 

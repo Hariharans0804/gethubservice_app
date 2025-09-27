@@ -1,11 +1,10 @@
 import { ActivityIndicator, Alert, Image, Keyboard, KeyboardAvoidingView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useMemo, useState } from 'react'
-import { Colors, Fonts, Images } from '../../constants'
+import { Colors, Fonts, Images } from '../../../constants'
 import { ArrowLeft, CircleArrowRight, CircleX, Eye, EyeOff } from 'lucide-react-native';
-import { loginAPI } from '../../api/postApi';
 import Toast from 'react-native-toast-message';
-import { getFromStorage, saveToStorage } from '../../utils';
-// import { getFromStorage, saveToStorage } from '../../utils/mmkvStorage';
+import { loginAPI } from '../api/authApi';
+import { getFromStorage, saveToStorage } from '../../../utils';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
