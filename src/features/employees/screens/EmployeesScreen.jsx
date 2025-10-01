@@ -3,37 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { Colors, Fonts, } from '../../../constants'
 import { Plus, CircleX, Grid, List, } from 'lucide-react-native'
 import { CommonGrid, CommonListing } from '../../../components';
+import { employeesFields } from '../data/employeeFields';
 
-const employeeFields = [
-  {
-    key: "name",
-    label: "Employee Name",
-    type: "text",
-    placeholder: "Enter employee name",
-    required: true,
-  },
-  {
-    key: "email",
-    label: "Email",
-    type: "text",
-    placeholder: "Enter employee email",
-    required: true,
-  },
-  {
-    key: "phone",
-    label: "Phone Number",
-    type: "number",
-    placeholder: "Enter employee phone number",
-    required: true,
-  },
-  {
-    key: "address",
-    label: "Address",
-    type: "textarea",
-    placeholder: "Enter employee address",
-    required: false,
-  }
-];
+
 
 const EmployeesScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
@@ -43,9 +15,9 @@ const EmployeesScreen = ({ navigation }) => {
 
   useEffect(() => {
     setEmployeeFormFields((prev) => {
-      // let exists = customerFields.filter(item => item.key != 'email');
+      // let exists = employeesFields.filter(item => item.key != 'email');
       // console.log('exists', exists);
-      return [...employeeFields,
+      return [...employeesFields,
       {
         key: "role",
         label: "Role",

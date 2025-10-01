@@ -3,30 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { Colors, Fonts, } from '../../../constants'
 import { Plus, CircleX, Grid, List, } from 'lucide-react-native'
 import { CommonGrid, CommonListing } from '../../../components';
+import { servicesFields } from '../data/serviceFields';
 
-const serviceFields = [
-  {
-    key: "name",
-    label: "Service Name",
-    type: "text",
-    placeholder: "Enter service name",
-    required: true,
-  },
-  {
-    key: "price",
-    label: "Price",
-    type: "number",
-    placeholder: "Enter service price",
-    required: true,
-  },
-  {
-    key: "description",
-    label: "Service Description",
-    type: "textarea",
-    placeholder: "Enter service description",
-    required: false,
-  },
-];
+
 
 const ServicesScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
@@ -37,9 +16,9 @@ const ServicesScreen = ({ navigation }) => {
 
   useEffect(() => {
     setServiceFormFields((prev) => {
-      // let exists = serviceFields.filter(item => item.key != 'price');
+      // let exists = servicesFields.filter(item => item.key != 'price');
       // console.log('exists', exists);
-      return [...serviceFields,
+      return [...servicesFields,
       {
         key: "duration",
         label: "Duration",

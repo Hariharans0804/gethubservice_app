@@ -1,10 +1,11 @@
+// import { apiCall } from "../../../utils"
+
+// export const loginAPI = (loginData) => {
+//     return apiCall({ endpoint: "/users/login", method: "POST", body: loginData, token: false });
+// }
+
 // Use baseURL from environment variable
 import { API_HOST } from '@env';
-import { getFromStorage } from '../../../utils';
-
-const token = getFromStorage('token');
-console.log('Fetched token post:', token);
-
 
 export const loginAPI = async (loginData) => {
     try {

@@ -6,7 +6,7 @@ import { Colors, Fonts } from '../../../constants';
 import { ServicesScreen } from '../../services';
 import { CustomersScreen } from '../../customers';
 import { EmployeesScreen } from '../../employees';
-import { BookingsScreen } from '../../bookings';
+import { AppointmentsScreen } from '../../appointments';
 
 const DynamicScreen = ({ route, navigation }) => {
 
@@ -33,16 +33,16 @@ const DynamicScreen = ({ route, navigation }) => {
         <ServicesScreen screenId={screenId} navigation={navigation} />
       )}
 
-      {screenId === 'reviews' && (
-        <CustomersScreen screenId={screenId} navigation={navigation} />
-      )}
-
       {screenId === 'staff' && (
         <EmployeesScreen screenId={screenId} navigation={navigation} />
       )}
 
       {screenId === 'reservations' && (
-        <BookingsScreen screenId={screenId} navigation={navigation} />
+        <AppointmentsScreen screenId={screenId} navigation={navigation} />
+      )}
+
+      {screenId === 'customers' && (
+        <CustomersScreen screenId={screenId} navigation={navigation} />
       )}
 
 

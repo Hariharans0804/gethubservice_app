@@ -2,77 +2,12 @@ import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'r
 import React, { useCallback, useEffect, useState } from 'react'
 import { Colors, Fonts } from '../../../constants';
 import { CircleX, Cone, Grid, List, Plus } from 'lucide-react-native';
-import { CategoriesListing, CommonGrid, CommonListing } from '../../../components';
 import Toast from 'react-native-toast-message';
 import { createCategoryAPI, deleteCategoryAPI, editCategoryAPI, fetchCategoriesAPI } from '../api/categoryApi';
+import CategoriesListing from '../components/CategoriesListing';
+import { buildCategoryTree } from '../../../utils';
+import { categoriesFields } from '../data/categoryFields';
 
-const categoriesFields = [
-    {
-        key: "name",
-        label: "Category Name",
-        type: "text",
-        placeholder: "Enter category name",
-        required: true,
-    },
-    // {
-    //     key: "type",
-    //     label: "Category Type",
-    //     type: "dropdown",
-    //     options: [
-    //         { label: "Product", value: "product" },
-    //         { label: "Service", value: "service" },
-    //         { label: "Both", value: "both" },
-    //     ],
-    //     placeholder: "Select category type",
-    //     required: true,
-    // },
-    {
-        key: "description",
-        label: "Category Description",
-        type: "textarea",
-        placeholder: "Enter category description",
-        required: false,
-    },
-    {
-        key: "icon",
-        label: "Category Icon",
-        type: "text",
-        placeholder: "e.g., any emoji",
-        required: false,
-    },
-    {
-        key: "parent",
-        label: "Parent Category",
-        type: "treeDropdown",
-        options: [], // This can be populated with existing categories
-        placeholder: "Select parent category",
-        required: false,
-    }
-];
-
-
-const buildCategoryTree = (categories) => {
-    const map = {};
-    const roots = [];
-
-    // Step 1: create map
-    categories.forEach((cat) => {
-        map[cat._id] = { ...cat, children: [] };
-    });
-
-    // Step 2: assign children to parents
-    categories.forEach((cat) => {
-        if (cat.parent && cat.parent._id) {
-            if (map[cat.parent._id]) {
-                map[cat.parent._id].children.push(map[cat._id]);
-            }
-        } else {
-            roots.push(map[cat._id]); // root if no parent
-        }
-    });
-
-    return roots;
-};
 
 
 const CategoriesScreen = ({ navigation }) => {
@@ -98,24 +33,20 @@ const CategoriesScreen = ({ navigation }) => {
     };
 
 
-
     useEffect(() => {
         fetchCategories();
     }, []);
-
-
-
 
 
     const fetchCategories = async () => {
         try {
             setLoading(true);
             const result = await fetchCategoriesAPI();
-                 console.log('result',result);
+            console.log('result', result);
             if (result.success) {
                 const tree = buildCategoryTree(result.data.data);
-                console.log('tree',tree);
-                
+                console.log('tree', tree);
+
                 setCategories(tree);
             }
         } catch (err) {
@@ -347,133 +278,4 @@ const styles = StyleSheet.create({
     }
 })
 
-
-// const fetchCategories = async () => {
-//     try {
-//         const result = await fetchCategoriesAPI();
-//         if (result.success) {
-//             setCategories(result.data);
-
-//             // update parent dropdown dynamically
-//             setCategoryFormFields([
-//                 ...categoriesFields.map((field) =>
-//                     field.key === "parent"
-//                         ? {
-//                             ...field,
-//                             options: result.data
-//                                 .filter((c) => c._id !== category?._id)   // 👈 exclude self
-//                                 .map((c) => ({
-//                                     label: c.name,
-//                                     value: c._id,
-//                                 })),
-//                         }
-//                         : field
-//                 ),
-//             ]);
-//         }
-//     } catch (err) {
-//         console.error("Failed to fetch categories:", err);
-//     }
-// };
-
-
-
-// const fetchCategories = async () => {
-//     const result = await fetchCategoriesAPI();
-//     console.log('result', result);
-//     if (result.success) {
-//         setCategories(result.data);
-//     } else {
-//         console.error('Failed to fetch categories:', result.error);
-//     }
-// };
-
-
-// useEffect(() => {
-//     setCategoryFormFields((prev) => {
-//         // let exists = customerFields.filter(item => item.key != 'email');
-//         // console.log('exists', exists);
-//         return [...categoriesFields,
-//         {
-//             key: "additionalInfo",
-//             label: "Additional Info",
-//             type: "textarea",
-//             placeholder: "Enter any additional info",
-//             required: false,
-//         }]
-//     });
-
-//     fetchCategories();
-//     console.log('Render');
-
-// }, []);
-
-
-
-
-
-
-// const fetchCategories = async () => {
-//     const result = await fetchCategoriesAPI();
-//     if (result.success) {
-//         // populate parent dropdown with categories
-//         setCategoryFormFields([
-//             ...categoriesFields.map(field =>
-//                 field.key === "parent"
-//                     ? { ...field, options: result.data.map(c => ({ label: c.name, value: c._id })) }
-//                     : field
-//             ),
-//             {
-//                 key: "additionalInfo",
-//                 label: "Additional Info",
-//                 type: "textarea",
-//                 placeholder: "Enter any additional info",
-//                 required: false,
-//             }
-//         ]);
-//         setCategories(result.data);
-//     } else {
-//         console.error('Failed to fetch categories:', result.error);
-//     }
-// };
-
-// const addCategory = async (formData, existing) => {
-//     try {
-//         if (existing) {
-//             await editCategoriesAPI(existing._id, formData);
-//             Toast.show({ type: 'success', text1: 'Category updated successfully!' });
-//         } else {
-//             await createCategoriesAPI(formData);
-//             Toast.show({ type: 'success', text1: 'Category created successfully!' });
-//         }
-//         fetchCategories();
-//     } catch (error) {
-//         console.error("Failed to save category:", error);
-//         Toast.show({
-//             type: 'error',
-//             text1: 'Category save failed!',
-//             text2: 'Please try again.',
-//         });
-//     }
-// };
-
-
-// const handleAdd = () => {
-//     navigation.navigate('Add', {
-//         fields: categoryFormFields,
-//         title: 'Category',
-//         setData: setCategories,
-//         onSubmit: addCategory,
-//     });
-// };
-
-// const handleEdit = (category) => {
-//     navigation.navigate('Add', {
-//         fields: categoryFormFields,
-//         title: 'Category',
-//         setData: setCategories,
-//         onSubmit: addCategory,
-//         data: category,  // existing for edit
-//     });
-// };
 

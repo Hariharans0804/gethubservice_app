@@ -2,17 +2,18 @@ import { API_HOST } from "@env";
 import { getFromStorage } from "./mmkvStorage";
 
 // common API function
-export const apiCall = async ({ endpoint, method = "GET", body = null }) => {
+export const apiCall = async ({ endpoint, method = "GET", body = null, token = true }) => {
   try {
-    const token = getFromStorage("token");
-    if (!token) throw new Error("No token found");
+    const headers = {};
 
-    const headers = {
-      "Authorization": `Bearer ${token}`,
-    //   "Content-Type": "application/json",
-    };
+    // 🔑 Add Authorization header only if token=true
+    if (token) {
+      const savedToken = getFromStorage("token");
+      if (!savedToken) throw new Error("No token found");
+      headers["Authorization"] = `Bearer ${savedToken}`;
+    }
 
-      // add content-type only if body exists
+    // add content-type only if body exists
     if (body) {
       headers["Content-Type"] = "application/json";
     }
@@ -41,9 +42,20 @@ export const apiCall = async ({ endpoint, method = "GET", body = null }) => {
       data = { success: true };
     }
 
+    // ✅ Normalize
+    // if backend already sends { success, data }, keep it
+    // if (data && typeof data === "object" && "success" in data && "data" in data) {
+    //   return data;
+    // }
+
+    // if backend just sends an array or object, wrap it
     return { success: true, data };
+
+    // return data; // ✅ unwrap, return clean data directly
+
   } catch (error) {
     console.error("API Error:", error);
     return { success: false, error: error.message };
+    // throw error; // ✅ throw instead of wrapping, so components can catch
   }
 };

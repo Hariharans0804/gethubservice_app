@@ -197,6 +197,13 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
               )}
             </TouchableOpacity>
 
+            <TouchableOpacity 
+            style={{/*borderWidth:1,*/marginHorizontal: 20, marginVertical: 25, }}
+            onPress={()=>navigation.navigate('CreateSite')}
+            >
+              <Text style={[styles.subtitle, { fontFamily: Fonts.POPPINS_SEMI_BOLD, textAlign: 'center', textDecorationLine: 'underline' }]}>Create Site</Text>
+            </TouchableOpacity>
+
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>

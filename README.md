@@ -216,6 +216,7 @@ ios -> ios/YourApp/Info.plist open pannunga
     │       ├── screens/
     │       │   ├── DashboardScreen.jsx
     │       │   ├── DynamicScreen.jsx   # ✅ put your DynamicScreen here
+    │       │   ├── AddScreen.jsx       # ✅ put your AddScreen here
     │       │   └── ReportsScreen.jsx
     │       ├── components/   # Core widgets (charts, analytics cards)
     │       └── index.js

@@ -4,15 +4,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { Colors } from '../constants';
 import CustomDrawerContent from './CustomDrawerContent';
-import { drawerListAfterLogin, drawerListBeforeLogin } from '../data/drawerList';
 import { CustomHeader } from '../components';
 import { getFromStorage } from '../utils/mmkvStorage';
-import { AddScreen } from '../screens/LoginAfter';
-// import { LoginScreen, SplashScreen } from '../screens/Auth';
-// import DynamicScreen from '../screens/LoginAfter/DynamicScreen';
-import { fetchSidebarData } from '../api/getApi';
 import { LoginScreen, SplashScreen } from '../features/auth';
-import { DynamicScreen } from '../features/core';
+import { AddScreen, DynamicScreen } from '../features/core';
+import { fetchSidebarData } from '../features/core/api/coreApi';
+import { CreateSiteScreen } from '../features/createSite';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -27,15 +24,11 @@ const AppDrawer = ({ isLoggedIn, setIsLoggedIn }) => {
             setIsLoading(true);
             if (isLoggedIn) {
                 try {
-                    const data = await fetchSidebarData();
-                    console.log("Parsed sidebar:", data?.sidebar?.sections);
+                    const res  = await fetchSidebarData();  // res = { success, data }
+                    console.log("Parsed sidebar:", res?.data?.sidebar?.sections);
 
-                    // if (data?.sidebar?.sections) {
-                    //     setSidebarData(data.sidebar.sections);
-                    // }
-
-                    if (data?.sidebar?.sections?.length) {
-                        setSidebarData(data.sidebar.sections);
+                    if (res?.success && res?.data?.sidebar?.sections?.length) {
+                        setSidebarData(res?.data.sidebar.sections);
                     } else {
                         setSidebarData([]);
                     }
@@ -50,7 +43,8 @@ const AppDrawer = ({ isLoggedIn, setIsLoggedIn }) => {
         getSidebarData();
     }, [isLoggedIn]);
 
-    const drawerList = isLoggedIn ? (sidebarData || []) : drawerListBeforeLogin;
+    // const drawerList = isLoggedIn ? (sidebarData || []) : drawerListBeforeLogin;
+    const drawerList = isLoggedIn && (sidebarData || []);
 
     const transformApiData = (item) => {
         return {
@@ -162,6 +156,7 @@ const RootNavigator = () => {
                 </Stack.Screen>
             )}
             <Stack.Screen name="Add" component={AddScreen} options={{ headerShown: true }} />
+            <Stack.Screen name="CreateSite" component={CreateSiteScreen} options={{ headerShown: true }} />
         </Stack.Navigator>
     )
 }

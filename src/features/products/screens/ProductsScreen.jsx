@@ -5,66 +5,11 @@ import { Plus, CircleX, Grid, List } from 'lucide-react-native'
 import { CommonGrid, CommonListing } from '../../../components';
 import Toast from 'react-native-toast-message';
 import { createProductAPI, deleteProductAPI, editProductAPI, fetchCategoriesAPI, fetchProductsAPI } from '../api/productApi';
-
-// product NativeModules, sku, category, price, priceperday
-
-const productFields = [
-  {
-    key: "name",
-    label: "Product Name",
-    type: "text",
-    placeholder: "Enter product name",
-    required: true,
-  },
-  {
-    key: "sku",
-    label: "SKU",
-    type: "text",
-    placeholder: "Enter SKU",
-    required: true,
-  },
-  {
-    key: "pricePerDay",   // 👈 backend expectation
-    label: "Price",
-    type: "number",
-    placeholder: "$ 0.00",
-    required: true,
-  },
-  {
-    key: "category",
-    label: "Choose Category",
-    type: "treeDropdown",
-    options: [], // This can be populated with existing categories
-    placeholder: "Select category",
-    required: false,
-  },
-];
+import { buildCategoryTree } from '../../../utils';
+import { productsFields } from '../data/productFields';
 
 // remove category field
-const listingFields = productFields.filter(f => f.key !== "category");
-
-const buildCategoryTree = (categories) => {
-  const map = {};
-  const roots = [];
-
-  // Step 1: create map
-  categories.forEach((cat) => {
-    map[cat._id] = { ...cat, children: [] };
-  });
-
-  // Step 2: assign children to parents
-  categories.forEach((cat) => {
-    if (cat.parent && cat.parent._id) {
-      if (map[cat.parent._id]) {
-        map[cat.parent._id].children.push(map[cat._id]);
-      }
-    } else {
-      roots.push(map[cat._id]); // root if no parent
-    }
-  });
-
-  return roots;
-};
+const listingFields = productsFields.filter(f => f.key !== "category");
 
 
 const ProductsScreen = ({ navigation }) => {
@@ -75,7 +20,6 @@ const ProductsScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);   // 👈 list
   const [product, setProduct] = useState({});     // 👈 single item
   const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
-
 
 
 
@@ -104,8 +48,8 @@ const ProductsScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const result = await fetchProductsAPI();
-      // console.log('productList', result.data);
-      setProducts(result.data);
+      console.log('productList', result?.data?.data);
+      setProducts(result?.data?.data);
 
     } catch (err) {
       console.error("Failed to fetch categories:", err);
@@ -124,8 +68,8 @@ const ProductsScreen = ({ navigation }) => {
       const treeOptions = buildCategoryTree(result.data.data);
       setCategories(treeOptions);
 
-      // Assign to productFields
-      productFields.forEach((field) => {
+      // Assign to productsFields
+      productsFields.forEach((field) => {
         if (field.key === "category") {
           field.options = treeOptions;
         }
@@ -163,12 +107,10 @@ const ProductsScreen = ({ navigation }) => {
   };
 
 
-
-
   const handleAdd = () => {
     setProduct({});
     navigation.navigate("Add", {
-      fields: productFields,
+      fields: productsFields,
       title: 'Product',
       data: {},
       onSubmit: handleProductSubmit,
@@ -178,7 +120,7 @@ const ProductsScreen = ({ navigation }) => {
   // 👇 parent handlers
   const handleEdit = (product) => {
     navigation.navigate('Add', {
-      fields: productFields,
+      fields: productsFields,
       title: 'Product',
       data: product,  // pass existing product
       onSubmit: handleProductSubmit,
@@ -401,19 +343,3 @@ const styles = StyleSheet.create({
 
 
 
-// const [productFormFields, setProductFormFields] = useState([]);
-
-// useEffect(() => {
-//   setProductFormFields((prev) => {
-//     // let exists = productFields.filter(item => item.key != 'price');
-//     // console.log('exists', exists);
-//     return [...productFields,
-//     {
-//       key: "quantity",
-//       label: "Product Quantity",
-//       type: "number",
-//       placeholder: "Enter quantity",
-//       required: false,
-//     }]
-//   })
-// }, []);
