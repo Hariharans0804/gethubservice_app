@@ -7,10 +7,11 @@ import { createCategoryAPI, deleteCategoryAPI, editCategoryAPI, fetchCategoriesA
 import CategoriesListing from '../components/CategoriesListing';
 import { buildCategoryTree } from '../../../utils';
 import { categoriesFields } from '../data/categoryFields';
+import { ScreenHeader } from '../../../components';
 
 
 
-const CategoriesScreen = ({ navigation }) => {
+const CategoriesScreen = ({ title, navigation }) => {
 
     const [searchText, setSearchText] = useState('');
     const [loading, setLoading] = useState(false);
@@ -133,37 +134,8 @@ const CategoriesScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Categories</Text>
 
-
-
-            <View style={styles.searchContainer}>
-                <View style={styles.textInputContainer}>
-                    <TextInput
-                        placeholder='Search'
-                        placeholderTextColor={Colors.DEFAULT_DARK_GRAY}
-                        selectionColor={Colors.DEFAULT_DARK_GRAY}
-                        style={styles.textInput}
-                        value={searchText}
-                        onChangeText={setSearchText}
-                    />
-                    {searchText && (
-                        <TouchableOpacity onPress={() => setSearchText('')} activeOpacity={0.8}>
-                            <CircleX size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
-                        </TouchableOpacity>
-                    )}
-                </View>
-
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={handleAdd}
-                >
-                    <Plus size={20} color={Colors.DEFAULT_WHITE} />
-                    <Text style={styles.addButtonText}>Add</Text>
-                </TouchableOpacity>
-            </View>
-
-
+            <ScreenHeader searchText={searchText} setSearchText={setSearchText} title={title} />
 
             <FlatList
                 key={"list"}   // 👈 force re-render
@@ -196,55 +168,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.DEFAULT_WHITE
-    },
-    heading: {
-        fontSize: 22,
-        // lineHeight: 22 * 1.4,
-        fontFamily: Fonts.POPPINS_SEMI_BOLD,
-        padding: 10,
-        color: Colors.DEFAULT_SKY_BLUE
-    },
-    searchContainer: {
-        // borderWidth: 1,
-        marginHorizontal: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 20
-    },
-    textInputContainer: {
-        borderWidth: 1.5,
-        flexDirection: 'row',
-        alignItems: 'center',
-        // justifyContent:'space-between'
-        gap: 2,
-        width: '73%',
-        borderRadius: 30,
-        backgroundColor: Colors.DEFAULT_WHITE,
-        borderColor: Colors.DEFAULT_DARK_GRAY,
-    },
-    textInput: {
-        width: '82%',
-        // paddingHorizontal: 10,
-        fontSize: 16,
-        fontFamily: Fonts.POPPINS_MEDIUM,
-        marginLeft: 15
-    },
-    addButton: {
-        backgroundColor: Colors.DEFAULT_SKY_BLUE,
-        borderRadius: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        // justifyContent: 'space-around',
-        padding: 10
-    },
-    addButtonText: {
-        fontSize: 16,
-        lineHeight: 16 * 1.4,
-        fontFamily: Fonts.POPPINS_SEMI_BOLD,
-        // paddingVertical: 10,
-        // paddingHorizontal:15,
-        color: Colors.DEFAULT_WHITE
     },
     emptyText: {
         textAlign: 'center',

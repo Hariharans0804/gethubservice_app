@@ -2,145 +2,116 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, } from '
 import React, { useEffect, useState } from 'react'
 import { Colors, Fonts, } from '../../../constants'
 import { Plus, CircleX, Grid, List, } from 'lucide-react-native'
-import { CommonGrid, CommonListing } from '../../../components';
+import { CommonGrid, CommonListing, ScreenHeader } from '../../../components';
 import { appointmentsFields } from '../data/appointmentFields';
 
-const AppointmentsScreen = ({navigation}) => {
+const AppointmentsScreen = ({ title, navigation }) => {
   const [searchText, setSearchText] = useState('');
-   const [appointments, setAppointments] = useState([]);
-   const [appointmentFormFields, setAppointmentFormFields] = useState([]);
-   const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
- 
-   useEffect(() => {
-     setAppointmentFormFields((prev) => {
-       // let exists = appointmentsFields.filter(item => item.key != 'email');
-       // console.log('exists', exists);
-       return [...appointmentsFields,
-       {
-         key: "notes",
-         label: "Notes",
-         type: "textarea",
-         placeholder: "Any special instructions or comments",
-         required: false,
-       }]
-     })
-   }, []);
- 
-   const addAppointment = () => {
-     console.log('Appointment after addition:', appointments);
-   };
- 
-   // 👇 parent handlers
-   const handleEdit = (appointment) => {
-     console.log('Edit appointment:', appointment);
-     navigation.navigate('Add', {
-       fields: appointmentFormFields,
-       title: 'Appointment',
-       setData: setAppointments,
-       onSubmit: addAppointment,
-       data: appointment,  // pass existing appointment
-     });
-   };
- 
- 
-   return (
-     <View style={styles.container}>
-       <Text style={styles.heading}>Appointments</Text>
- 
-       {/* Toggle View Button */}
-       <TouchableOpacity
-         style={styles.viewToggleButton}
-         activeOpacity={0.8}
-         onPress={() => setViewType(viewType === 'list' ? 'grid' : 'list')}
-       >
-         {viewType === 'list' ? (
-           <>
-             <Text style={styles.viewTypeText}>Grid</Text>
-             <Grid size={18} color={Colors.DEFAULT_SKY_BLUE} />
-           </>
-         ) : (
-           <>
-             <Text style={styles.viewTypeText}>List</Text>
-             <List size={18} color={Colors.DEFAULT_SKY_BLUE} />
-           </>
-         )}
-       </TouchableOpacity>
- 
-       <View style={styles.searchContainer}>
-         <View style={styles.textInputContainer}>
-           <TextInput
-             placeholder='Search'
-             placeholderTextColor={Colors.DEFAULT_DARK_GRAY}
-             selectionColor={Colors.DEFAULT_DARK_GRAY}
-             style={styles.textInput}
-             value={searchText}
-             onChangeText={setSearchText}
-           />
-           {searchText && (
-             <TouchableOpacity onPress={() => setSearchText('')} activeOpacity={0.8}>
-               <CircleX size={20} color={Colors.DEFAULT_DARK_GRAY} style={styles.icon} />
-             </TouchableOpacity>
-           )}
-         </View>
- 
-         <TouchableOpacity
-           style={styles.addButton}
-           onPress={() => navigation.navigate('Add', {
-             fields: appointmentFormFields,
-             title: 'Appointment',
-             setData: setAppointments,
-             onSubmit: addAppointment,
-           })}
-         >
-           <Plus size={20} color={Colors.DEFAULT_WHITE} />
-           <Text style={styles.addButtonText}>Add</Text>
-         </TouchableOpacity>
-       </View>
- 
-       {viewType === 'list' ? (
-         <FlatList
-           key={"list"}   // 👈 force re-render
-           data={appointments}
-           keyExtractor={(item) => item.id.toString()}
-           style={styles.flatListContainer}
-           renderItem={({ item }) => (
-             <CommonListing
-               item={item}
-               fields={appointmentFormFields}   // 👈 pass fields
-               navigation={navigation}
-               onEdit={handleEdit}  // 👈 pass handler
-             />
-           )}
-           ListEmptyComponent={
-             <Text style={styles.emptyText}>No appointments yet</Text>
-           }
-           contentContainerStyle={{ paddingBottom: 20 }}
-         />
-       ) : (
-         <FlatList
-           key={"grid"}   //   👈 different key 
-           data={appointments}
-           keyExtractor={(item) => item.id.toString()}
-           numColumns={2}
-           style={styles.flatListContainer}
-           renderItem={({ item }) => (
-             <CommonGrid
-               item={item}
-               fields={appointmentFormFields}   // 👈 pass field 
-               navigation={navigation}
-               onEdit={handleEdit}     // 👈 pass parent handlers
-             />
-           )}
-           ListEmptyComponent={
-             <Text style={styles.emptyText}>No appointments yet</Text>
-           }
-           contentContainerStyle={{ paddingBottom: 20 }}
-         />
-       )}
- 
-     </View>
-   )
- }
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentFormFields, setAppointmentFormFields] = useState([]);
+  const [viewType, setViewType] = useState('list'); // 'list' or 'grid'
+
+  useEffect(() => {
+    setAppointmentFormFields((prev) => {
+      // let exists = appointmentsFields.filter(item => item.key != 'email');
+      // console.log('exists', exists);
+      return [...appointmentsFields,
+      {
+        key: "notes",
+        label: "Notes",
+        type: "textarea",
+        placeholder: "Any special instructions or comments",
+        required: false,
+      }]
+    })
+  }, []);
+
+  const addAppointment = () => {
+    console.log('Appointment after addition:', appointments);
+  };
+
+  // 👇 parent handlers
+  const handleEdit = (appointment) => {
+    console.log('Edit appointment:', appointment);
+    navigation.navigate('Add', {
+      fields: appointmentFormFields,
+      title: 'Appointment',
+      setData: setAppointments,
+      onSubmit: addAppointment,
+      data: appointment,  // pass existing appointment
+    });
+  };
+
+
+  return (
+    <View style={styles.container}>
+
+      {/* Toggle View Button */}
+      <TouchableOpacity
+        style={styles.viewToggleButton}
+        activeOpacity={0.8}
+        onPress={() => setViewType(viewType === 'list' ? 'grid' : 'list')}
+      >
+        {viewType === 'list' ? (
+          <>
+            <Text style={styles.viewTypeText}>Grid</Text>
+            <Grid size={18} color={Colors.DEFAULT_SKY_BLUE} />
+          </>
+        ) : (
+          <>
+            <Text style={styles.viewTypeText}>List</Text>
+            <List size={18} color={Colors.DEFAULT_SKY_BLUE} />
+          </>
+        )}
+      </TouchableOpacity>
+
+      <ScreenHeader searchText={searchText} setSearchText={setSearchText} title={title} />
+
+
+      {viewType === 'list' ? (
+        <FlatList
+          key={"list"}   // 👈 force re-render
+          data={appointments}
+          keyExtractor={(item) => item.id.toString()}
+          style={styles.flatListContainer}
+          renderItem={({ item }) => (
+            <CommonListing
+              item={item}
+              fields={appointmentFormFields}   // 👈 pass fields
+              navigation={navigation}
+              onEdit={handleEdit}  // 👈 pass handler
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No appointments yet</Text>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      ) : (
+        <FlatList
+          key={"grid"}   //   👈 different key 
+          data={appointments}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          style={styles.flatListContainer}
+          renderItem={({ item }) => (
+            <CommonGrid
+              item={item}
+              fields={appointmentFormFields}   // 👈 pass field 
+              navigation={navigation}
+              onEdit={handleEdit}     // 👈 pass parent handlers
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No appointments yet</Text>
+          }
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
+
+    </View>
+  )
+}
 
 export default AppointmentsScreen
 
