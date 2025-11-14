@@ -12,7 +12,7 @@ import { productsFields } from '../data/productFields';
 const listingFields = productsFields.filter(f => f.key !== "category");
 
 
-const ProductsScreen = ({ title,navigation }) => {
+const ProductsScreen = ({ title, navigation }) => {
 
   const [searchText, setSearchText] = useState('');
   const [categories, setCategories] = useState([]);   // 👈 list
@@ -150,7 +150,12 @@ const ProductsScreen = ({ title,navigation }) => {
         )}
       </TouchableOpacity>
 
-       <ScreenHeader searchText={searchText} setSearchText={setSearchText} title={title} />
+      <ScreenHeader
+        searchText={searchText}
+        setSearchText={setSearchText}
+        title={title}
+        handleAdd={handleAdd}
+      />
 
       {viewType === 'list' ? (
         <FlatList

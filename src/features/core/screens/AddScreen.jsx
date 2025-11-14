@@ -51,9 +51,9 @@ const AddScreen = ({ route, navigation }) => {
           errors={errors}
           type={field.type}          // 👈 Pass type
           options={field.options}    // 👈 Pass options for dropdown
-            // 👇 extra props
-  setValue={setValue}
-  watchName={field.key}
+          // 👇 extra props
+          setValue={setValue}
+          watchName={field.key}
         />
       ))}
 
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.DEFAULT_WHITE,
-    padding:20,
+    padding: 20,
     // borderWidth:1,
     // borderColor:'red'
   },

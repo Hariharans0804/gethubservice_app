@@ -13,7 +13,7 @@ const App = () => {
       <SafeAreaProvider>
         <NavigationContainer>
           <RootNavigator />
-           <Toast config={ToastConfig} />
+          <Toast config={ToastConfig} />
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>

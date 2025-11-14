@@ -11,5 +11,5 @@ export {
     removeFromStorage,
     buildSchema,
     apiCall,
-    buildCategoryTree
+    buildCategoryTree,
 };

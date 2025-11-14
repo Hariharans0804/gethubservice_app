@@ -101,7 +101,7 @@ cd android
 gradlew clean
 gradlew assembleRelease
 
-
+npx react-native run-android --active-arch-only
 npm start --reset-cache
 npx react-native start --reset-cache
 
@@ -246,3 +246,40 @@ ios -> ios/YourApp/Info.plist open pannunga
     │   └── index.js
     │
     └── 📁types               # (optional, if using TypeScript)
+
+
+
+====================================================================================
+wireless debugging wi-fi option on
+===================================
+/* step - 1 */
+adb devices
+/* message */
+List of devices attached
+
+
+/* step - 2  */
+adb pair 192.168.1.35:45453 237711  -> Pair device with pairing code
+/* message */
+Successfully paired to 192.168.1.35:45453 [guid=adb-00055349J001656-iwKIg9]
+
+
+/* step - 3 */
+adb connect 192.168.1.35:46611 
+/* message */
+connected to 192.168.1.35:46611
+
+
+/* step - 4 */
+adb devices
+/* message */
+List of devices attached
+192.168.1.35:46611      device
+
+
+
+/* kill process */
+adb -s emulator-5554 emu kill
+adb disconnect emulator-5554
+
+====================================================================================

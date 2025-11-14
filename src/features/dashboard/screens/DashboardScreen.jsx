@@ -46,6 +46,7 @@ const DashboardScreen = ({ title, navigation }) => {
 
       <ScreenHeader hideSections={hideSections} searchText={searchText} setSearchText={setSearchText} title={title} />
 
+
       <View style={{/*borderWidth:1,*/marginTop: -20 }}>
         <DashboardMenu data={dashboardItems_1} />
       </View>

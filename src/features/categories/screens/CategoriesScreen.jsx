@@ -122,6 +122,7 @@ const CategoriesScreen = ({ title, navigation }) => {
         });
     };
 
+
     const handleEdit = (item) => {
         navigation.navigate("Add", {
             fields: handleGetParentCategory(item),
@@ -135,7 +136,12 @@ const CategoriesScreen = ({ title, navigation }) => {
     return (
         <View style={styles.container}>
 
-            <ScreenHeader searchText={searchText} setSearchText={setSearchText} title={title} />
+            <ScreenHeader
+                searchText={searchText}
+                setSearchText={setSearchText}
+                title={title}
+                handleAdd={handleAdd}
+            />
 
             <FlatList
                 key={"list"}   // 👈 force re-render
